@@ -35,3 +35,45 @@ body {
     align-items: center;
     justify-content: center;
 }
+
+.personal-info-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    /* Stack items vertically */
+
+    width: 128px;
+    height: 128px;
+    margin: 40px auto;
+
+    border: 12px solid black;
+    background-color: #ff0000;
+    color: white;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+.click-me-effect {
+    /* Optional: make button stand out */
+    padding: 10px;
+}
+
+.click-me-effect button {
+    background-color: white;
+    color: #ff0000;
+    border: 3px solid black;
+    padding: 4px 8px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.click-me-effect button:hover {
+    background-color: #ffff00;
+    /* Yellow on hover */
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 255, 0, 0.8);
+}

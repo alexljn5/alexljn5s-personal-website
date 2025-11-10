@@ -13,7 +13,9 @@
         <?php include 'componements/header.html'; ?>
     </div>
     <div class="personal-info-container">
-
+        <div class="click-me-effect">
+            <button type="submit">Click me!</button>
+        </div>
     </div>
     <div class="slideshow-container">
         <p>just to see</p>

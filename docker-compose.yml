@@ -1,0 +1,10 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"  # Access at http://localhost:8080
+    volumes:
+      - ./src:/var/www/html  # Live reload: edit files locally!
+    restart: unless-stopped

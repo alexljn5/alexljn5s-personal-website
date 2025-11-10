@@ -1,0 +1,33 @@
+body {
+    background-color: black;
+}
+
+.site-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.site-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slideshow-container {
+    background-color: red;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* Square size - change 400px to whatever you like! */
+    width: 400px;
+    height: 400px;
+
+    /* Black border: thickness, style, color */
+    border: 8px solid rgb(65, 6, 6);
+
+    /*background-color: black;*/
+    opacity: 0.5;
+    margin: 40px auto;
+}

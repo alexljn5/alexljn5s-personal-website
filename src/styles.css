@@ -1,5 +1,8 @@
 body {
     background-color: black;
+    color: white;
+    /* ← This makes ALL text inside white! */
+    font-family: Arial, sans-serif;
 }
 
 .site-header {
@@ -19,15 +22,16 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-
-    /* Square size - change 400px to whatever you like! */
     width: 400px;
     height: 400px;
-
-    /* Black border: thickness, style, color */
-    border: 8px solid rgb(65, 6, 6);
-
-    /*background-color: black;*/
+    border: 8px solid rgb(126, 0, 0);
+    background-color: red;
     opacity: 0.5;
     margin: 40px auto;
+}
+
+.simple-centerer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

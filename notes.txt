@@ -1,1 +1,26 @@
 //Kort en krachtig informatie over jezelf eerst, verdiepingsinfo later
+
+//Info voor de website
+Wie ben je?
+Alexander Leijen
+24
+Odeonstraat 1034, 1325AG
+
+Waar ben je goed in?
+- JavaScript
+- Java
+- Linux
+- Docker
+- HTML
+- CSS
+
+Contact info:
+alexljn5@gmail.com
++31631230161
+https://www.linkedin.com/in/alexander-leijen/
+
+Color scheme I use:
+Background colors
+Hex code: #121216
+
+Dominant theming color: 

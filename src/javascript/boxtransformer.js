@@ -171,4 +171,7 @@ ${GLITCH("૮ ˶• ༝ •˶ ꒱ა ♡")}
             startExpansion();
         }
     });
+    window.rebuildMainDashboard = triggerExpansion;
 });
+
+document.addEventListener("enterPortal", triggerExpansion);

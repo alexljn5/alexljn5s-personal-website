@@ -14,7 +14,7 @@ const injectGlobalStyles = () => {
             @keyframes ringSpinRev   { from { transform: rotate(0deg); }   to { transform: rotate(-360deg); } }
             @keyframes scanlines     { from { transform: translateY(-100%); } to { transform: translateY(100%); } }
             .glitch-text::before { color: var(--color-primary);  clip-path: polygon(0 0, 100% 0, 100% 48%, 0 48%); animation: g1 0.6s infinite; }
-            .glitch-text::after  { color: #ff0040;               clip-path: polygon(0 52%, 100% 52%, 100% 100%, 0 100%); animation: g2 0.5s infinite; }
+            .glitch-text::after  { color: #ffffffff;               clip-path: polygon(0 52%, 100% 52%, 100% 100%, 0 100%); animation: g2 0.5s infinite; }
             @keyframes g1 { 0%,100% { transform: translate(-3px,-2px); } 50% { transform: translate(4px,3px); } }
             @keyframes g2 { 0%,100% { transform: translate(4px,2px); }   50% { transform: translate(-5px,-4px); } }
         </style>
@@ -44,12 +44,12 @@ const injectGlitchBaseStyles = () => {
                 opacity: 0.9;
             }
             .glitch-text::before {
-                color: #CA2422;
+                color: #eb3a04ff;
                 clip-path: polygon(0 0, 100% 0, 100% 48%, 0 48%);
                 animation: glitch1 0.55s infinite;
             }
             .glitch-text::after {
-                color: #ff0040;
+                color: #000000ff;
                 clip-path: polygon(0 52%, 100% 52%, 100% 100%, 0 100%);
                 animation: glitch2 0.45s infinite;
             }

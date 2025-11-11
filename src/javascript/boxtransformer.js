@@ -1,5 +1,3 @@
-// boxtransformer.js — FINAL FORM ♡⛧
-// Alexander Leijen @alexljn5 — Amsterdam, November 11, 2025, 12:11 PM CET
 import { evilGlitchEffect, evilGlitchEffect2, GLITCH } from "./effects.js";
 document.addEventListener("DOMContentLoaded", () => {
     const mainBox = document.getElementById("mainBox");
@@ -113,7 +111,7 @@ ${customStyle}
                 <a href="https://x.com/alexljn5" target="_blank" style="color:#CA2422; text-decoration:none; margin:0 16px; text-shadow:0 0 20px #CA2422;">@alexljn5</a>
             </div>
             <p style="margin-top:28px; font-size:16px; opacity:0.9; text-align:center;">
-                Amsterdam • Available for internship • November 2025
+                Almere • Available for internship • 2025
             </p>
         `);
         addComponent("Who am I?", `

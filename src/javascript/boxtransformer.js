@@ -124,23 +124,17 @@ document.addEventListener("DOMContentLoaded", () => {
             <img src="img/alexljn5/alex_1.png" style="width:100%; max-width:420px; border-radius:20px; border:3px solid #CA2422; box-shadow:0 15px 40px rgba(202,36,34,0.6);">
         `);
 
-        addComponent("Eternal Truth", `
+        addComponent("Who am I?", `
             <p style="font-size:20px; text-align:center; line-height:2;">
                 <i>"Some colors fade.<br>
-                <span style="color:#CA2422; font-size:32px;">${GLITCH("#CA2422")}</span> only gets stronger."</i>
-            </p>
-            <p style="text-align:right; color:#ff6b6b; font-weight:bold; margin-top:30px;">
-                — Cream the Rabbit, November 11, 2025
+                <span style="color:#CA2422; font-size:32px;">${GLITCH("♡")}</span> only gets stronger."</i>
             </p>
         `);
 
-        const dangerCard = addComponent("DANGER ZONE", `
+        const dangerCard = addComponent("Enter the rabbit hole", `${GLITCH("૮꒰ ˶• ༝ •˶꒱ა ♡")}
             <p id="glitchme" style="font-size:28px; text-align:center; cursor:pointer; padding:30px; background:rgba(202,36,34,0.25); border-radius:16px;">
-                TOUCH ME AND AWAKEN THE DEMON
+                PRESS PRESS PRESS
             </p>
-            <div style="font-size:48px; font-weight:bold; text-align:center; margin:40px 0;">
-                ${GLITCH("SYSTEM COMPROMISED")}
-            </div>
         `);
 
         // DEMON AWAKENS ON CLICK

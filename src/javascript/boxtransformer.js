@@ -149,6 +149,7 @@ ${GLITCH("૮ ˶• ༝ •˶ ꒱ა ♡")}
             this.style.fontSize = "42px";
             this.style.color = "#CA2422";
             this.style.textShadow = "0 0 80px #CA2422";
+            setTimeout(() => import("./portfolio.js").then(m => m.enterFullPortfolio()), 1200);
         });
     };
     // ——— FINAL TRIGGER LOGIC ———

@@ -22,6 +22,41 @@ const injectGlobalStyles = () => {
     stylesInjected = true;
 };
 
+// ——————— RESTORE GLOBAL GLITCH STYLES (CRITICAL FOR DASHBOARD) ———————
+const injectGlitchBaseStyles = () => {
+    if (document.getElementById("cream-glitch-base")) return;
+    document.head.insertAdjacentHTML("beforeend", `
+        <style id="cream-glitch-base">
+            @keyframes glitch1 { 0%,100% { transform: translate(-4px,-3px); } 50% { transform: translate(5px,4px); } }
+            @keyframes glitch2 { 0%,100% { transform: translate(5px,3px); } 50% { transform: translate(-6px,-4px); } }
+            @keyframes flicker { 0%,100% { opacity: 0.7; } 50% { opacity: 1; } }
+
+            .glitch-text {
+                position: relative;
+                display: inline-block;
+            }
+            .glitch-text::before,
+            .glitch-text::after {
+                content: attr(data-glitch);
+                position: absolute;
+                left: 0; top: 0;
+                width: 100%; height: 100%;
+                opacity: 0.9;
+            }
+            .glitch-text::before {
+                color: #CA2422;
+                clip-path: polygon(0 0, 100% 0, 100% 48%, 0 48%);
+                animation: glitch1 0.55s infinite;
+            }
+            .glitch-text::after {
+                color: #ff0040;
+                clip-path: polygon(0 52%, 100% 52%, 100% 100%, 0 100%);
+                animation: glitch2 0.45s infinite;
+            }
+        </style>
+    `);
+};
+
 // ——————— PORTAL CONFIG — TINY. PERFECT. YOURS. ———————
 export const PORTAL_CONFIG = {
     colorPrimary: "#CA2422",
@@ -126,6 +161,7 @@ const generatePortalHTML = () => {
 export const activatePortalVoid = (container) => {
     if (!container) return;
     injectGlobalStyles();
+    injectGlitchBaseStyles();
     if (!document.getElementById("alex-entry-portal")) {
         document.head.appendChild(Object.assign(document.createElement("style"), {
             id: "alex-entry-portal",

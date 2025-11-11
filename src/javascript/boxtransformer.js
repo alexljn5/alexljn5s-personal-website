@@ -107,8 +107,6 @@ ${customStyle}
                 <a href="https://www.linkedin.com/in/alexander-leijen/" target="_blank" style="color:#CA2422; text-decoration:none; margin:0 16px; text-shadow:0 0 20px #CA2422;">LinkedIn</a>
                 •
                 <a href="https://github.com/alexljn5" target="_blank" style="color:#CA2422; text-decoration:none; margin:0 16px; text-shadow:0 0 20px #CA2422;">GitHub</a>
-                •
-                <a href="https://x.com/alexljn5" target="_blank" style="color:#CA2422; text-decoration:none; margin:0 16px; text-shadow:0 0 20px #CA2422;">@alexljn5</a>
             </div>
             <p style="margin-top:28px; font-size:16px; opacity:0.9; text-align:center;">
                 Almere • Available for internship • 2025

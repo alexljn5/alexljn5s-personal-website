@@ -7,6 +7,7 @@
     <title>alexljn5's Portfolio</title>
     <link rel="stylesheet" href="styles.css">
     <script src="javascript/boxtransformer.js" type="module"></script>
+    <script src="javascript/buttons.js" type="module"></script>
 </head>
 
 <body>

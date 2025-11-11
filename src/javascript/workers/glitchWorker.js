@@ -1,5 +1,5 @@
 // glitchWorker.js — Runs in background, zero main thread jank
-const chars = "⛧⸸⚡▣◆✦#CA2422█▓▒░";
+const chars = "⛧⸸▣◆✦#CA2422█▓▒░";
 
 self.onmessage = function (e) {
     const { id, text, intensity = 2, frame = 0 } = e.data;

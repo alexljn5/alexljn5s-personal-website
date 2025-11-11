@@ -107,8 +107,23 @@ document.addEventListener("DOMContentLoaded", () => {
         // ──────── COMPONENTS ────────
 
         addComponent("", `
-            <img src="img/alexljn5/alex_1.png" style="width:100%; max-width:420px; border-radius:20px; border:3px solid #CA2422; box-shadow:0 15px 40px rgba(202,36,34,0.6);">
-        `);
+    <img src="img/alexljn5/alex_1.png" style="width:100%; max-width:420px; border-radius:20px; border:3px solid #CA2422; box-shadow:0 15px 40px rgba(202,36,34,0.6);">
+    
+    <div style="margin-top: 32px; text-align: center; font-size: 18px; line-height: 2;">
+        <a href="https://www.linkedin.com/in/alexander-leijen/" target="_blank" style="color:#CA2422; text-decoration:none; margin:0 16px; text-shadow: 0 0 20px #CA2422;">
+            LinkedIn
+        </a>
+        •
+        <a href="https://github.com/alexljn5" target="_blank" style="color:#CA2422; text-decoration:none; margin:0 16px; text-shadow: 0 0 20px #CA2422;">
+            GitHub
+        </a>
+        •
+    </div>
+
+    <p style="margin-top: 28px; font-size: 16px; opacity: 0.9;">
+        Amsterdam • Available for internship • November 2025
+    </p>
+`);
 
         addComponent("Who am I?", `
             <p style="text-align:center; font-size:22px; margin-bottom:24px;">

@@ -83,7 +83,16 @@ export const enterFullPortfolio = () => {
 
 const buildPortfolioDashboard = (container) => {
     const grid = document.createElement("div");
-    grid.style.cssText = `display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:32px;width:100%;height:100%;padding:20px;box-sizing:border-box;overflow-y:auto;`;
+    grid.style.cssText = `
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+        gap:32px;
+        width:100%;
+        height:100%;
+        padding:20px;
+        box-sizing:border-box;
+        overflow-y:auto;
+    `;
     container.appendChild(grid);
 
     const addProject = (title = "", imageSrc = "", contentHtml = "", link = "#") => {
@@ -97,83 +106,87 @@ const buildPortfolioDashboard = (container) => {
             box-shadow:${THEME.cardShadow};
             transition:all .5s;
             position:relative;
-            cursor:pointer;
             overflow:hidden;
         `;
-
-        // Entire card click
-        card.onclick = () => window.open(link, "_blank");
 
         card.onmouseenter = () => {
             card.style.transform = "translateY(var(--theme-hover-lift))";
             card.style.borderColor = "var(--theme-primary)";
             card.style.boxShadow = THEME.hoverShadow;
-            if (overlay) overlay.style.opacity = "1";
         };
         card.onmouseleave = () => {
             card.style.transform = "";
             card.style.borderColor = "var(--theme-primary-border)";
             card.style.boxShadow = THEME.cardShadow;
-            if (overlay) overlay.style.opacity = "0";
         };
-
-        // Hover overlay
-        const overlay = document.createElement("div");
-        overlay.textContent = "View Project";
-        overlay.style.cssText = `
-            position:absolute;
-            top:0; left:0; width:100%; height:100%;
-            display:flex; align-items:center; justify-content:center;
-            background:rgba(202,36,34,0.7);
-            color:#fff; font-size:24px; font-weight:bold;
-            text-shadow:0 0 20px #000;
-            opacity:0; transition:opacity 0.3s;
-            pointer-events:none;
-            border-radius:${THEME.cardRadius};
-        `;
-        card.appendChild(overlay);
 
         if (title) {
             const h2 = document.createElement("h2");
             h2.innerHTML = GLITCH(title);
-            h2.style.cssText = `margin:0 0 20px;font-size:28px;color:var(--theme-primary);font-weight:800;text-shadow:0 0 40px var(--theme-primary);letter-spacing:2px;`;
+            h2.style.cssText = `
+                margin:0 0 20px;
+                font-size:28px;
+                color:var(--theme-primary);
+                font-weight:800;
+                text-shadow:0 0 40px var(--theme-primary);
+                letter-spacing:2px;
+            `;
             card.appendChild(h2);
         }
 
         if (imageSrc) {
             const imgContainer = document.createElement("div");
             imgContainer.style.cssText = `
-                position:relative;width:100%;height:200px;overflow:hidden;border-radius:12px;
-                margin-bottom:24px;box-shadow:0 4px 20px rgba(0,0,0,0.2);
+                position:relative;
+                width:100%;
+                height:200px;
+                overflow:hidden;
+                border-radius:12px;
+                margin-bottom:24px;
+                box-shadow:0 4px 20px rgba(0,0,0,0.2);
             `;
             const img = document.createElement("img");
             img.src = imageSrc;
             img.alt = title || "Project image";
-            img.style.cssText = "width:100%;height:100%;object-fit:cover;transition:transform 0.5s; border:3px solid var(--theme-primary); box-shadow:0 15px 40px rgba(202,36,34,0.6);";
+            img.style.cssText = `
+                width:100%;
+                height:100%;
+                object-fit:cover;
+                transition:transform 0.5s;
+                border:3px solid var(--theme-primary);
+                box-shadow:0 15px 40px rgba(202,36,34,0.6);
+                cursor:pointer;
+            `;
+            img.addEventListener("click", (e) => {
+                e.stopPropagation();
+                if (window.toggleImageZoom) window.toggleImageZoom(img);
+            });
             imgContainer.appendChild(img);
             card.appendChild(imgContainer);
 
-            // Hover zoom
-            card.onmouseenter = () => {
-                img.style.transform = "scale(1.1)";
-                card.style.transform = "translateY(var(--theme-hover-lift))";
-                card.style.borderColor = "var(--theme-primary)";
-                card.style.boxShadow = THEME.hoverShadow;
-                overlay.style.opacity = "1";
-            };
-            card.onmouseleave = () => {
-                img.style.transform = "";
-                card.style.transform = "";
-                card.style.borderColor = "var(--theme-primary-border)";
-                card.style.boxShadow = THEME.cardShadow;
-                overlay.style.opacity = "0";
-            };
+            card.addEventListener("mouseenter", () => img.style.transform = "scale(1.1)");
+            card.addEventListener("mouseleave", () => img.style.transform = "");
         }
 
         const content = document.createElement("div");
         content.innerHTML = contentHtml;
-        content.style.cssText = "color:var(--theme-text);line-height:1.8;font-size:17px;";
+        content.style.cssText = "color:var(--theme-text);line-height:1.8;font-size:17px;margin-bottom:12px;";
         card.appendChild(content);
+
+        // Add simple link below content
+        const linkEl = document.createElement("a");
+        linkEl.href = link;
+        linkEl.textContent = "🔗 View on GitHub";
+        linkEl.target = "_blank";
+        linkEl.style.cssText = `
+            color:var(--theme-primary);
+            font-weight:bold;
+            text-decoration:none;
+            transition:color 0.3s;
+        `;
+        linkEl.onmouseenter = () => linkEl.style.color = "#ff4444";
+        linkEl.onmouseleave = () => linkEl.style.color = "var(--theme-primary)";
+        card.appendChild(linkEl);
 
         grid.appendChild(card);
     };
@@ -181,23 +194,23 @@ const buildPortfolioDashboard = (container) => {
     addProject(
         "Bunbit Game Engine",
         "img/projects/bunbit_game_engine.png",
-        `<p>This very site. A living, breathing digital demon built with nothing but vanilla JS, CSS sorcery, and pure devotion.</p>
-         <p style="margin-top:16px;color:var(--theme-text-muted);font-size:15px;">Vanilla JS • Web Workers • CSS Hell • Love</p>`,
+        `<p>Game engine created with vanilla JavaScript and a little bit of Node.js.</p>
+         <p style="margin-top:16px;color:var(--theme-text-muted);font-size:15px;">Vanilla JS • Web Workers • CSS Magic • WebGL</p>`,
         "https://github.com/alexljn5/bunbit_project"
     );
 
     addProject(
         "Emerald Utilities",
         "img/projects/emerald_utilities.png",
-        `<p>A fully functional terminal-based OS running entirely in the browser.</p>
-         <p style="color:var(--theme-text-muted);font-size:15px;">Three.js • WebGL • WebAssembly</p>`,
+        `<p>A small auto script running tool.</p>
+         <p style="color:var(--theme-text-muted);font-size:15px;">Vanilla JS • NodeJS</p>`,
         "https://github.com/alexljn5/emerald-utilities"
     );
 
     addProject(
         "Tickit Team Project",
         "img/projects/tickit_team_project.png",
-        `<p>An infinite red gradient generator that slowly corrupts your soul.</p>
+        `<p>Team project for school, a student and teacher ticket management system.</p>
          <p style="color:var(--theme-text-muted);font-size:15px;">Canvas • requestAnimationFrame</p>`,
         "https://github.com/alexljn5/croissant_project"
     );
@@ -205,8 +218,8 @@ const buildPortfolioDashboard = (container) => {
     addProject(
         "Tools4Ever",
         "img/projects/tools4ever_project.png",
-        `<p style="font-style:italic;opacity:.8">More demons are being summoned...</p>
-         <p style="margin-top:20px;font-size:60px;text-align:center;"></p>`,
+        `<p>Fullstack project for school — a simple product dashboard where you can add, remove, view orders, and order new products.</p>
+         <p style="color:var(--theme-text-muted);font-size:15px;">JavaScript • MySQL • CSS</p>`,
         "https://github.com/alexljn5/alexljn5s-fullstack-project"
     );
 

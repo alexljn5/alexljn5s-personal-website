@@ -55,7 +55,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ——————— 2. DEFINE triggerExpansion ———————
     const triggerExpansion = () => {
-        // Reset body
         body.innerHTML = "";
         body.appendChild(mainBox);
         Object.assign(body.style, {
@@ -65,15 +64,13 @@ document.addEventListener("DOMContentLoaded", () => {
             minHeight: "100vh", overflow: "hidden"
         });
 
-        // Initial small box
         Object.assign(mainBox.style, {
             width: "400px", height: "400px",
             transition: "all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1)",
             opacity: "1"
         });
-        mainBox.offsetHeight; // Force reflow
+        mainBox.offsetHeight;
 
-        // Expand to full dashboard
         Object.assign(mainBox.style, {
             width: "calc(100vw - 80px)",
             height: "calc(100vh - 80px)",
@@ -106,8 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
         mainBox.appendChild(dashboard);
 
-        // ——————— 3. ADD ALL CARDS ———————
-        // Card 1: Image with lazy load
+        // ——————— 3. CARDS ———————
         const imageCard = addComponent("", `
             <div class="image-container" style="position:relative;width:100%;max-width:420px;margin:0 auto;">
                 <div class="image-placeholder" style="
@@ -146,7 +142,6 @@ document.addEventListener("DOMContentLoaded", () => {
         `);
         dashboard.appendChild(imageCard);
 
-        // Card 2: Who am I?
         const aboutCard = addComponent("Who am I?", `
             <p style="text-align:center; font-size:22px; margin-bottom:24px;">
                 My name is <strong style="color:var(--theme-primary);">Alexander Leijen</strong>.<br>
@@ -170,51 +165,47 @@ document.addEventListener("DOMContentLoaded", () => {
         `);
         dashboard.appendChild(aboutCard);
 
-        // Card 3: Enter the rabbit hole
+        // ——————— 4. PORTFOLIO BUTTON (cool version) ———————
         const portalCard = addComponent("Enter the rabbit hole", `
             <div style="text-align:center; font-size:60px; margin:40px 0;">${GLITCH("˚ʚ♡ɞ˚")}</div>
             <p id="glitchme" style="
-                font-size:28px; text-align:center; cursor:pointer;
-                padding:36px 40px; background:rgba(202,36,34,0.25);
-                border-radius:22px; transition:all 0.5s cubic-bezier(0.2,0.8,0.2,1);
+                font-size:22px; text-align:center; cursor:pointer;
+                padding:24px 36px; background:rgba(202,36,34,0.18);
+                border-radius:16px; transition:all 0.5s ease;
                 position:relative; overflow:hidden; backdrop-filter:blur(10px);
-                border:2px solid transparent; box-shadow:0 8px 32px rgba(0,0,0,0.3);
+                border:1px solid var(--theme-primary); box-shadow:0 0 30px rgba(202,36,34,0.3);
+                color:var(--theme-text); font-weight:600;
             ">
-                View my full portfolio ${GLITCH("˚ʚ♡ɞ˚")}
+                View Portfolio
             </p>
         `, `
-            min-height:240px; display:flex; flex-direction:column;
-            justify-content:center; align-items:center; padding:40px 32px !important; gap:24px;
+            display:flex; flex-direction:column; justify-content:center;
+            align-items:center; padding:40px 32px !important;
         `);
         dashboard.appendChild(portalCard);
 
-        // ——————— 4. PRELOAD IMAGE (after DOM exists) ———————
-        const preloadImage = (src) => new Promise((resolve, reject) => {
-            const img = new Image();
-            img.onload = () => resolve(img);
-            img.onerror = reject;
-            img.src = src;
-        });
-
-        const imageContainer = dashboard.querySelector('.image-container');
-        const lazyImg = imageContainer?.querySelector('.lazy-image');
-        const placeholder = imageContainer?.querySelector('.image-placeholder');
+        const lazyImg = dashboard.querySelector(".lazy-image");
+        const placeholder = dashboard.querySelector(".image-placeholder");
 
         if (lazyImg && placeholder && lazyImg.dataset.src) {
             const imgSrc = lazyImg.dataset.src;
+            const preloadImage = (src) => new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = src;
+            });
 
             preloadImage(imgSrc)
                 .then(() => {
-                    // THIS IS THE MISSING LINE:
-                    lazyImg.src = imgSrc;  // NOW THE DOM IMAGE LOADS!
-
-                    lazyImg.style.display = 'block';
-                    lazyImg.style.opacity = '0';
-                    placeholder.style.opacity = '0';
+                    lazyImg.src = imgSrc;
+                    lazyImg.style.display = "block";
+                    lazyImg.style.opacity = "0";
+                    placeholder.style.opacity = "0";
 
                     requestAnimationFrame(() => {
-                        lazyImg.style.transition = 'opacity 0.6s ease';
-                        lazyImg.style.opacity = '1';
+                        lazyImg.style.transition = "opacity 0.6s ease";
+                        lazyImg.style.opacity = "1";
                         setTimeout(() => placeholder.remove(), 600);
                     });
                 })
@@ -224,23 +215,37 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
         }
 
-        // ——————— 5. GLITCH BUTTON ———————
+        // ——————— 5. COOL PORTFOLIO ENTRY EFFECT ———————
         const glitchBtn = document.getElementById("glitchme");
         if (glitchBtn) {
-            glitchBtn.addEventListener("click", function () {
-                evilGlitchEffect(this, 12);
-                evilGlitchEffect2(this);
-                this.style.transform = "scale(1.15)";
-                this.style.padding = "48px 56px";
-                this.style.fontSize = "36px";
-                this.style.letterSpacing = "3px";
-                this.style.background = "rgba(202,36,34,0.4)";
-                this.style.border = "2px dashed var(--theme-primary)";
-                this.style.boxShadow = "0 0 60px var(--theme-primary), inset 0 0 40px rgba(202,36,34,0.3)";
-                this.textContent = "ENTERING THE VOID...";
+            glitchBtn.addEventListener("mouseenter", () => {
+                glitchBtn.style.transform = "scale(1.05)";
+                glitchBtn.style.boxShadow = "0 0 40px var(--theme-primary), inset 0 0 20px rgba(202,36,34,0.3)";
+            });
+
+            glitchBtn.addEventListener("mouseleave", () => {
+                glitchBtn.style.transform = "scale(1)";
+                glitchBtn.style.boxShadow = "0 0 30px rgba(202,36,34,0.2)";
+            });
+
+            glitchBtn.addEventListener("click", () => {
+                evilGlitchEffect(glitchBtn, 5);
+                evilGlitchEffect2(glitchBtn);
+                glitchBtn.style.transition = "all 0.8s ease";
+                glitchBtn.style.letterSpacing = "2px";
+                glitchBtn.style.opacity = "0.6";
+                glitchBtn.style.boxShadow = "0 0 60px var(--theme-primary-glow)";
+                glitchBtn.style.cursor = "wait";
+                glitchBtn.textContent = "Opening Portfolio...";
+
+                // Dramatic blur & fade of dashboard
+                dashboard.style.transition = "filter 1s ease, opacity 1s ease";
+                dashboard.style.filter = "blur(10px)";
+                dashboard.style.opacity = "0";
+
                 setTimeout(() => {
                     import("./portfolio.js").then(m => m.enterFullPortfolio());
-                }, 1400);
+                }, 1000);
             });
         }
     };

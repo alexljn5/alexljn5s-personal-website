@@ -73,11 +73,9 @@ export const PORTAL_CONFIG = {
 
 // ——————— ULTRA-OPTIMIZED SQUARE PORTAL — NO LAG ———————
 const generatePortalCSS = () => {
-    // LIVE THEME — NO FALLBACK. NO MERCY.
-    const t = window.CURRENT_THEME || {
-        primary: "#CA2422",
-        text: "#ffd7d7"
-    };
+    const t = window.CURRENT_THEME || { primary: "#CA2422", text: "#ffd7d7" };
+    const baseSize = parseInt(PORTAL_CONFIG.size) || 460;
+    const scale = baseSize / 460;
 
     const rings = PORTAL_CONFIG.rings.map((r, i) =>
         `.r${i + 1}{animation:ringSpin${r.rev ? 'Rev' : ''} ${r.dur} linear infinite;opacity:${r.op}}`
@@ -92,7 +90,7 @@ const generatePortalCSS = () => {
             border-radius:${PORTAL_CONFIG.borderRadius};
             background:radial-gradient(circle at 50% 50%,${t.primary}20 0%,#0a0000 100%);
             box-shadow:0 0 80px ${t.primary}cc, inset 0 0 70px ${t.primary}40;
-            overflow:hidden;
+            overflow:visible; /* ← THIS IS THE KILL SHOT */
             animation:portalPulse 7s infinite ease-in-out;
             transition:transform .7s cubic-bezier(.2,.8,.2,1.2),box-shadow .7s;
             backdrop-filter:blur(2px);
@@ -117,22 +115,59 @@ const generatePortalCSS = () => {
             border-radius:50%;
         }
         ${rings}
+
         .portal-text{
-            position:absolute;bottom:70px;left:50%;transform:translateX(-50%);
-            text-align:center;color:${t.text};font-weight:900;
+            position:absolute;
+            bottom:70px;
+            left:50%;
+            transform:translateX(-50%);
+            text-align:center;
+            color:${t.text};
+            font-weight:900;
             text-shadow:0 0 40px ${t.primary}, 0 0 80px ${t.primary};
-            z-index:10;letter-spacing:2px;
+            z-index:10;
+            width:90%; /* ← PREVENT OVERFLOW */
+            max-width:90%;
+            padding:0 10px;
+            box-sizing:border-box;
         }
-        .line-0{font-size:40x;margin-bottom:8px;}
-        .line-1,
-        .line-2{font-size:46px;letter-spacing:6px;}
-        .line-3{font-size:20px;margin-top:20px;opacity:0.9;}
-        .line-4{font-size:20px;margin-top:20px;opacity:0.9;}
+
+        /* RESPONSIVE SCALING — EVERY LINE OBEYS */
+        .line-0 { 
+            font-size: ${48 * scale}px; 
+            margin-bottom: ${12 * scale}px; 
+            line-height:1;
+        }
+        .line-1 { 
+            font-size: ${52 * scale}px; 
+            letter-spacing: ${6 * scale}px; 
+            margin-bottom: ${8 * scale}px;
+            white-space: nowrap;
+        }
+        .line-2 { 
+            font-size: ${46 * scale}px; 
+            letter-spacing: ${6 * scale}px;
+            white-space: nowrap;
+            overflow: visible !important;
+        }
+        .line-3 { 
+            font-size: ${36 * scale}px; 
+            margin-top: ${24 * scale}px; 
+            opacity: 0.95;
+        }
+        .line-4 { 
+            font-size: ${22 * scale}px; 
+            opacity: 0.9;
+        }
+
         .scanlines{
-            position:absolute;inset:0;
+            position:absolute;
+            inset:0;
             background:repeating-linear-gradient(0deg,transparent,transparent 4px,${t.primary}10 4px,${t.primary}10 8px);
             animation:scanlines 10s linear infinite;
-            mix-blend-mode:overlay;pointer-events:none;opacity:0.3;
+            mix-blend-mode:overlay;
+            pointer-events:none;
+            opacity:0.3;
         }
     `.replace(/\s+/g, ' ').trim();
 };
@@ -144,11 +179,11 @@ const generatePortalHTML = () => {
             <div class="core-glow"></div>
             ${rings}
             <div class="portal-text">
-            <div class="line-0">૮ ˶ᵔ ᵕ ᵔ˶ ა"</div>
+            <div class="line-0">૮ ˶ᵔ ᵕ ᵔ˶ ა</div>
             <div class="line-1">ִֶAlexander</div>
                 <div class="line-2">Leijen's</div>
                 <div class="line-3">Website</div>
-                <div class="line-4">Press to enter! Ი︵𐑼</div>
+                <div class="line-4">Press to enter! ${GLITCH("Ი𐑼")}</div>
             </div>
             <div class="scanlines"></div>
         </div>

@@ -86,19 +86,52 @@ const buildPortfolioDashboard = (container) => {
     grid.style.cssText = `display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:32px;width:100%;height:100%;padding:20px;box-sizing:border-box;overflow-y:auto;`;
     container.appendChild(grid);
 
-    const addProject = (title = "", imageSrc = "", contentHtml = "") => {
+    const addProject = (title = "", imageSrc = "", contentHtml = "", link = "#") => {
         const card = document.createElement("div");
-        card.style.cssText = `background:var(--theme-primary-soft);border-radius:${THEME.cardRadius};padding:32px;backdrop-filter:blur(12px);border:${THEME.cardBorderWidth} solid var(--theme-primary-border);box-shadow:${THEME.cardShadow};transition:all .5s;position:relative;`;
+        card.style.cssText = `
+            background:var(--theme-primary-soft);
+            border-radius:${THEME.cardRadius};
+            padding:32px;
+            backdrop-filter:blur(12px);
+            border:${THEME.cardBorderWidth} solid var(--theme-primary-border);
+            box-shadow:${THEME.cardShadow};
+            transition:all .5s;
+            position:relative;
+            cursor:pointer;
+            overflow:hidden;
+        `;
+
+        // Entire card click
+        card.onclick = () => window.open(link, "_blank");
+
         card.onmouseenter = () => {
             card.style.transform = "translateY(var(--theme-hover-lift))";
             card.style.borderColor = "var(--theme-primary)";
             card.style.boxShadow = THEME.hoverShadow;
+            if (overlay) overlay.style.opacity = "1";
         };
         card.onmouseleave = () => {
             card.style.transform = "";
             card.style.borderColor = "var(--theme-primary-border)";
             card.style.boxShadow = THEME.cardShadow;
+            if (overlay) overlay.style.opacity = "0";
         };
+
+        // Hover overlay
+        const overlay = document.createElement("div");
+        overlay.textContent = "View Project";
+        overlay.style.cssText = `
+            position:absolute;
+            top:0; left:0; width:100%; height:100%;
+            display:flex; align-items:center; justify-content:center;
+            background:rgba(202,36,34,0.7);
+            color:#fff; font-size:24px; font-weight:bold;
+            text-shadow:0 0 20px #000;
+            opacity:0; transition:opacity 0.3s;
+            pointer-events:none;
+            border-radius:${THEME.cardRadius};
+        `;
+        card.appendChild(overlay);
 
         if (title) {
             const h2 = document.createElement("h2");
@@ -109,7 +142,10 @@ const buildPortfolioDashboard = (container) => {
 
         if (imageSrc) {
             const imgContainer = document.createElement("div");
-            imgContainer.style.cssText = "position:relative;width:100%;height:200px;overflow:hidden;border-radius:12px;margin-bottom:24px;box-shadow:0 4px 20px rgba(0,0,0,0.2);cursor:pointer;";
+            imgContainer.style.cssText = `
+                position:relative;width:100%;height:200px;overflow:hidden;border-radius:12px;
+                margin-bottom:24px;box-shadow:0 4px 20px rgba(0,0,0,0.2);
+            `;
             const img = document.createElement("img");
             img.src = imageSrc;
             img.alt = title || "Project image";
@@ -117,36 +153,20 @@ const buildPortfolioDashboard = (container) => {
             imgContainer.appendChild(img);
             card.appendChild(imgContainer);
 
-            // Add click to enlarge
-            imgContainer.onclick = () => {
-                const modal = document.createElement("div");
-                modal.style.cssText = "position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:10000;transition:opacity 0.3s;opacity:0;";
-                const largeImg = document.createElement("img");
-                largeImg.src = imageSrc;
-                largeImg.style.cssText = "max-width:90%;max-height:90%;border:5px solid var(--theme-primary);box-shadow:0 20px 60px rgba(202,36,34,0.8);border-radius:12px;";
-                modal.appendChild(largeImg);
-                document.body.appendChild(modal);
-                requestAnimationFrame(() => { modal.style.opacity = "1"; });
-                const closeModal = () => {
-                    modal.style.opacity = "0";
-                    setTimeout(() => modal.remove(), 300);
-                };
-                modal.onclick = closeModal;
-                document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); }, { once: true });
-            };
-
-            // Hover zoom (existing)
+            // Hover zoom
             card.onmouseenter = () => {
                 img.style.transform = "scale(1.1)";
                 card.style.transform = "translateY(var(--theme-hover-lift))";
                 card.style.borderColor = "var(--theme-primary)";
                 card.style.boxShadow = THEME.hoverShadow;
+                overlay.style.opacity = "1";
             };
             card.onmouseleave = () => {
                 img.style.transform = "";
                 card.style.transform = "";
                 card.style.borderColor = "var(--theme-primary-border)";
                 card.style.boxShadow = THEME.cardShadow;
+                overlay.style.opacity = "0";
             };
         }
 
@@ -158,12 +178,37 @@ const buildPortfolioDashboard = (container) => {
         grid.appendChild(card);
     };
 
+    addProject(
+        "Bunbit Game Engine",
+        "img/projects/bunbit_game_engine.png",
+        `<p>This very site. A living, breathing digital demon built with nothing but vanilla JS, CSS sorcery, and pure devotion.</p>
+         <p style="margin-top:16px;color:var(--theme-text-muted);font-size:15px;">Vanilla JS • Web Workers • CSS Hell • Love</p>`,
+        "https://github.com/alexljn5/bunbit_project"
+    );
 
+    addProject(
+        "Emerald Utilities",
+        "img/projects/emerald_utilities.png",
+        `<p>A fully functional terminal-based OS running entirely in the browser.</p>
+         <p style="color:var(--theme-text-muted);font-size:15px;">Three.js • WebGL • WebAssembly</p>`,
+        "https://github.com/alexljn5/emerald-utilities"
+    );
 
-    addProject("Bunbit Game Engine", "img/projects/bunbit_game_engine.png", `<p>This very site. A living, breathing digital demon built with nothing but vanilla JS, CSS sorcery, and pure devotion.</p><p style="margin-top:16px;color:var(--theme-text-muted);font-size:15px;">Vanilla JS • Web Workers • CSS Hell • Love</p><a href="https://github.com/alexljn5/portfolio" target="_blank" style="position:absolute;bottom:24px;right:28px;color:var(--theme-primary);font-weight:bold;text-decoration:none;text-shadow:0 0 20px var(--theme-primary);">View Source CROSS</a>`);
-    addProject("Emerald Utilities", "img/projects/emerald_utilities.png", `<p>A fully functional terminal-based OS running entirely in the browser.</p><p style="color:var(--theme-text-muted);font-size:15px;">Three.js • WebGL • WebAssembly</p><a href="https://voidos.alexljn5.dev" target="_blank" style="position:absolute;bottom:24px;right:28px;color:var(--theme-primary);font-weight:bold;text-decoration:none;text-shadow:0 0 20px var(--theme-primary);">Launch CROSS</a>`);
-    addProject("Tickit Team Project", "img/projects/tickit_team_project.png", `<p>An infinite red gradient generator that slowly corrupts your soul.</p><p style="color:var(--theme-text-muted);font-size:15px;">Canvas • requestAnimationFrame</p>`);
-    addProject("Tools4Ever", "img/projects/tools4ever_project.png", `<p style="font-style:italic;opacity:.8">More demons are being summoned...</p><p style="margin-top:20px;font-size:60px;text-align:center;">${GLITCH("CROSS")}</p>`);
+    addProject(
+        "Tickit Team Project",
+        "img/projects/tickit_team_project.png",
+        `<p>An infinite red gradient generator that slowly corrupts your soul.</p>
+         <p style="color:var(--theme-text-muted);font-size:15px;">Canvas • requestAnimationFrame</p>`,
+        "https://github.com/alexljn5/croissant_project"
+    );
+
+    addProject(
+        "Tools4Ever",
+        "img/projects/tools4ever_project.png",
+        `<p style="font-style:italic;opacity:.8">More demons are being summoned...</p>
+         <p style="margin-top:20px;font-size:60px;text-align:center;"></p>`,
+        "https://github.com/alexljn5/alexljn5s-fullstack-project"
+    );
 
     createBackButton("Return to Overview", returnToMainDashboard, "left");
     createBackButton("Return to Reality", returnToReality, "right");

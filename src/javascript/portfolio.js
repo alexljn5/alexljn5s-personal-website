@@ -64,21 +64,77 @@ export const enterFullPortfolio = () => {
         mainBox.style.opacity = "0";
         setTimeout(() => {
             Object.assign(mainBox.style, {
-                width: "calc(100vw - 80px)", height: "calc(100vh - 80px)",
-                maxWidth: THEME.maxWidth, maxHeight: THEME.maxHeight,
-                margin: THEME.margin, padding: THEME.padding,
+                width: "calc(100vw - 80px)",
+                height: "calc(100vh - 80px)",
+                maxWidth: THEME.maxWidth,
+                maxHeight: THEME.maxHeight,
+                margin: THEME.margin,
+                padding: THEME.padding,
                 borderRadius: THEME.borderRadius,
                 border: `${THEME.borderWidth} solid var(--theme-primary)`,
                 background: "var(--theme-bg-gradient)",
                 outline: `8px solid var(--theme-primary-alpha)`,
                 boxShadow: "0 20px 100px var(--theme-primary-glow), inset 0 0 80px rgba(202,36,34,0.1)",
                 animation: "pulseGlow 6s infinite alternate",
-                transform: "", opacity: "1"
+                transform: "",
+                opacity: "1"
             });
             mainBox.innerHTML = "";
             buildPortfolioDashboard(mainBox);
         }, 900);
     }, 1000);
+};
+
+// 🔥 Toggle image zoom overlay (using clone for smoother experience)
+window.toggleImageZoom = (img) => {
+    const existingOverlay = document.getElementById("imageZoomOverlay");
+    if (existingOverlay) {
+        existingOverlay.style.opacity = "0";
+        setTimeout(() => existingOverlay.remove(), 400);
+        return;
+    }
+
+    // Create dark overlay
+    const overlay = document.createElement("div");
+    overlay.id = "imageZoomOverlay";
+    overlay.style.cssText = `
+        position:fixed;top:0;left:0;width:100%;height:100%;
+        background:rgba(0,0,0,0.8);
+        backdrop-filter:blur(8px);
+        z-index:9998;
+        display:flex;align-items:center;justify-content:center;
+        opacity:0;transition:opacity 0.4s ease;
+    `;
+    document.body.appendChild(overlay);
+
+    // Clone the image for zoom (keeps original in place)
+    const clonedImg = img.cloneNode();
+    clonedImg.style.cssText = `
+        max-width:90%;max-height:90%;object-fit:contain;
+        border:3px solid var(--theme-primary);
+        box-shadow:0 0 100px rgba(202,36,34,0.8);
+        border-radius:12px;
+        transform:scale(0.8);transition:transform 0.4s ease;
+        cursor:zoom-out;
+    `;
+    overlay.appendChild(clonedImg);
+
+    // Fade in and scale up
+    setTimeout(() => {
+        overlay.style.opacity = "1";
+        clonedImg.style.transform = "scale(1)";
+    }, 10);
+
+    // Click to close
+    const closeZoom = () => {
+        clonedImg.style.transform = "scale(0.8)";
+        overlay.style.opacity = "0";
+        setTimeout(() => overlay.remove(), 400);
+    };
+    overlay.addEventListener("click", closeZoom);
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeZoom();
+    }, { once: true });
 };
 
 const buildPortfolioDashboard = (container) => {
@@ -94,7 +150,6 @@ const buildPortfolioDashboard = (container) => {
         overflow-y:auto;
     `;
     container.appendChild(grid);
-
     const addProject = (title = "", imageSrc = "", contentHtml = "", link = "#") => {
         const card = document.createElement("div");
         card.style.cssText = `
@@ -108,7 +163,6 @@ const buildPortfolioDashboard = (container) => {
             position:relative;
             overflow:hidden;
         `;
-
         card.onmouseenter = () => {
             card.style.transform = "translateY(var(--theme-hover-lift))";
             card.style.borderColor = "var(--theme-primary)";
@@ -119,7 +173,6 @@ const buildPortfolioDashboard = (container) => {
             card.style.borderColor = "var(--theme-primary-border)";
             card.style.boxShadow = THEME.cardShadow;
         };
-
         if (title) {
             const h2 = document.createElement("h2");
             h2.innerHTML = GLITCH(title);
@@ -133,47 +186,34 @@ const buildPortfolioDashboard = (container) => {
             `;
             card.appendChild(h2);
         }
-
         if (imageSrc) {
             const imgContainer = document.createElement("div");
             imgContainer.style.cssText = `
-                position:relative;
-                width:100%;
-                height:200px;
-                overflow:hidden;
-                border-radius:12px;
-                margin-bottom:24px;
-                box-shadow:0 4px 20px rgba(0,0,0,0.2);
+                position:relative;width:100%;height:200px;overflow:hidden;border-radius:12px;
+                margin-bottom:24px;box-shadow:0 4px 20px rgba(0,0,0,0.2);
             `;
             const img = document.createElement("img");
             img.src = imageSrc;
             img.alt = title || "Project image";
             img.style.cssText = `
-                width:100%;
-                height:100%;
-                object-fit:cover;
-                transition:transform 0.5s;
+                width:100%;height:100%;object-fit:cover;transition:transform 0.5s;
                 border:3px solid var(--theme-primary);
                 box-shadow:0 15px 40px rgba(202,36,34,0.6);
                 cursor:pointer;
             `;
             img.addEventListener("click", (e) => {
                 e.stopPropagation();
-                if (window.toggleImageZoom) window.toggleImageZoom(img);
+                window.toggleImageZoom(img);
             });
             imgContainer.appendChild(img);
             card.appendChild(imgContainer);
-
-            card.addEventListener("mouseenter", () => img.style.transform = "scale(1.1)");
-            card.addEventListener("mouseleave", () => img.style.transform = "");
+            card.addEventListener("mouseenter", () => (img.style.transform = "scale(1.1)"));
+            card.addEventListener("mouseleave", () => (img.style.transform = ""));
         }
-
         const content = document.createElement("div");
         content.innerHTML = contentHtml;
         content.style.cssText = "color:var(--theme-text);line-height:1.8;font-size:17px;margin-bottom:12px;";
         card.appendChild(content);
-
-        // Add simple link below content
         const linkEl = document.createElement("a");
         linkEl.href = link;
         linkEl.textContent = "🔗 View on GitHub";
@@ -184,13 +224,11 @@ const buildPortfolioDashboard = (container) => {
             text-decoration:none;
             transition:color 0.3s;
         `;
-        linkEl.onmouseenter = () => linkEl.style.color = "#ff4444";
-        linkEl.onmouseleave = () => linkEl.style.color = "var(--theme-primary)";
+        linkEl.onmouseenter = () => (linkEl.style.color = "#ff4444");
+        linkEl.onmouseleave = () => (linkEl.style.color = "var(--theme-primary)");
         card.appendChild(linkEl);
-
         grid.appendChild(card);
     };
-
     addProject(
         "Bunbit Game Engine",
         "img/projects/bunbit_game_engine.png",
@@ -198,7 +236,6 @@ const buildPortfolioDashboard = (container) => {
          <p style="margin-top:16px;color:var(--theme-text-muted);font-size:15px;">Vanilla JS • Web Workers • CSS Magic • WebGL</p>`,
         "https://github.com/alexljn5/bunbit_project"
     );
-
     addProject(
         "Emerald Utilities",
         "img/projects/emerald_utilities.png",
@@ -206,7 +243,6 @@ const buildPortfolioDashboard = (container) => {
          <p style="color:var(--theme-text-muted);font-size:15px;">Vanilla JS • NodeJS</p>`,
         "https://github.com/alexljn5/emerald-utilities"
     );
-
     addProject(
         "Tickit Team Project",
         "img/projects/tickit_team_project.png",
@@ -214,7 +250,6 @@ const buildPortfolioDashboard = (container) => {
          <p style="color:var(--theme-text-muted);font-size:15px;">Canvas • requestAnimationFrame</p>`,
         "https://github.com/alexljn5/croissant_project"
     );
-
     addProject(
         "Tools4Ever",
         "img/projects/tools4ever_project.png",
@@ -222,7 +257,6 @@ const buildPortfolioDashboard = (container) => {
          <p style="color:var(--theme-text-muted);font-size:15px;">JavaScript • MySQL • CSS</p>`,
         "https://github.com/alexljn5/alexljn5s-fullstack-project"
     );
-
     createBackButton("Return to Overview", returnToMainDashboard, "left");
     createBackButton("Return to Reality", returnToReality, "right");
 };

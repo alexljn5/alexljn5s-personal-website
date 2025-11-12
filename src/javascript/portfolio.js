@@ -1,18 +1,15 @@
-// portfolio.js — THE FINAL, PERFECT, ETERNAL VERSION
-// Alexander Leijen @alexljn5 — Amsterdam, November 11, 2025 — 02:45 PM CET
-
 import { evilGlitchEffect, evilGlitchEffect2, GLITCH } from "./effects.js";
+import THEME from "./globals.js";
 
-// ——————— REUSABLE BACK BUTTON ———————
 const createBackButton = (text, onClick, position = "left") => {
     const btn = document.createElement("div");
     btn.innerHTML = text;
     btn.style.cssText = `
-        position:fixed; top:50px; ${position === "right" ? "right:50px;" : "left:50px;"} z-index:9999;
-        color:#CA2422; font-size:18px; font-weight:bold; cursor:pointer;
-        padding:14px 28px; background:rgba(202,36,34,0.25);
-        border:2px solid #CA2422; border-radius:16px;
-        backdrop-filter:blur(12px); text-shadow:0 0 30px #CA2422;
+        position:fixed;top:50px;${position === "right" ? "right:50px;" : "left:50px;"}z-index:9999;
+        color:var(--theme-primary);font-size:18px;font-weight:bold;cursor:pointer;
+        padding:14px 28px;background:rgba(202,36,34,0.25);
+        border:2px solid var(--theme-primary);border-radius:16px;
+        backdrop-filter:blur(12px);text-shadow:0 0 30px var(--theme-primary);
         transition:all 0.4s ease;
     `;
     btn.onmouseenter = () => {
@@ -30,27 +27,16 @@ const createBackButton = (text, onClick, position = "left") => {
     document.body.appendChild(btn);
 };
 
-// ——————— RETURN TO MAIN DASHBOARD — WORKS 100% ———————
 export const returnToMainDashboard = () => {
     const mainBox = document.getElementById("mainBox");
     if (!mainBox) return;
-
-    // Remove old back buttons
     document.querySelectorAll("div[style*='position:fixed'][style*='z-index:9999']").forEach(el => el.remove());
-
     mainBox.style.transition = "all 1.2s cubic-bezier(0.16, 1, 0.3, 1)";
     mainBox.style.transform = "scale(0.94) rotate(1deg)";
     mainBox.style.opacity = "0";
-
-    setTimeout(() => {
-        // This function exists globally because boxtransformer.js runs on load
-        if (typeof window.rebuildMainDashboard === "function") {
-            window.rebuildMainDashboard();
-        }
-    }, 800);
+    setTimeout(() => window.rebuildMainDashboard?.(), 800);
 };
 
-// ——————— RETURN TO REALITY ———————
 export const returnToReality = () => {
     const mainBox = document.getElementById("mainBox");
     if (mainBox) {
@@ -58,76 +44,219 @@ export const returnToReality = () => {
         mainBox.style.transform = "scale(0.1) rotate(666deg)";
         mainBox.style.opacity = "0";
     }
-    setTimeout(() => window.location.reload(), 1800);
+    setTimeout(() => location.reload(), 1800);
 };
 
-// ——————— ENTER PORTFOLIO ———————
 export const enterFullPortfolio = () => {
     const mainBox = document.getElementById("mainBox");
     if (!mainBox) return;
-
     const trigger = document.getElementById("glitchme");
     if (trigger) {
         evilGlitchEffect(trigger, 16);
         evilGlitchEffect2(trigger);
         trigger.textContent = "CREAM IS ETERNAL CROSS";
         trigger.style.fontSize = "52px";
-        trigger.style.textShadow = "0 0 100px #CA2422";
+        trigger.style.textShadow = "0 0 100px var(--theme-primary)";
     }
-
     setTimeout(() => {
         mainBox.style.transition = "all 1.4s cubic-bezier(0.16, 1, 0.3, 1)";
         mainBox.style.transform = "scale(0.92) rotate(-1deg)";
         mainBox.style.opacity = "0";
-
         setTimeout(() => {
             Object.assign(mainBox.style, {
-                width: "calc(100vw - 80px)", height: "calc(100vh - 80px)",
-                maxWidth: "1600px", maxHeight: "900px",
-                margin: "40px", padding: "40px",
-                borderRadius: "28px", border: "4px solid #CA2422",
-                background: "linear-gradient(135deg, #1a0003 0%, #2a0005 30%, #150002 100%)",
-                outline: "8px solid rgba(202, 36, 34, 0.15)",
-                boxShadow: "0 20px 100px rgba(202, 36, 34, 0.8), inset 0 0 80px rgba(202, 36, 34, 0.1)",
+                width: "calc(100vw - 80px)",
+                height: "calc(100vh - 80px)",
+                maxWidth: THEME.maxWidth,
+                maxHeight: THEME.maxHeight,
+                margin: THEME.margin,
+                padding: THEME.padding,
+                borderRadius: THEME.borderRadius,
+                border: `${THEME.borderWidth} solid var(--theme-primary)`,
+                background: "var(--theme-bg-gradient)",
+                outline: `8px solid var(--theme-primary-alpha)`,
+                boxShadow: "0 20px 100px var(--theme-primary-glow), inset 0 0 80px rgba(202,36,34,0.1)",
                 animation: "pulseGlow 6s infinite alternate",
-                transform: "", opacity: "1"
+                transform: "",
+                opacity: "1"
             });
-
             mainBox.innerHTML = "";
             buildPortfolioDashboard(mainBox);
         }, 900);
     }, 1000);
 };
 
+// 🔥 Toggle image zoom overlay (using clone for smoother experience)
+window.toggleImageZoom = (img) => {
+    const existingOverlay = document.getElementById("imageZoomOverlay");
+    if (existingOverlay) {
+        existingOverlay.style.opacity = "0";
+        setTimeout(() => existingOverlay.remove(), 400);
+        return;
+    }
+
+    // Create dark overlay
+    const overlay = document.createElement("div");
+    overlay.id = "imageZoomOverlay";
+    overlay.style.cssText = `
+        position:fixed;top:0;left:0;width:100%;height:100%;
+        background:rgba(0,0,0,0.8);
+        backdrop-filter:blur(8px);
+        z-index:9998;
+        display:flex;align-items:center;justify-content:center;
+        opacity:0;transition:opacity 0.4s ease;
+    `;
+    document.body.appendChild(overlay);
+
+    // Clone the image for zoom (keeps original in place)
+    const clonedImg = img.cloneNode();
+    clonedImg.style.cssText = `
+        max-width:90%;max-height:90%;object-fit:contain;
+        border:3px solid var(--theme-primary);
+        box-shadow:0 0 100px rgba(202,36,34,0.8);
+        border-radius:12px;
+        transform:scale(0.8);transition:transform 0.4s ease;
+        cursor:zoom-out;
+    `;
+    overlay.appendChild(clonedImg);
+
+    // Fade in and scale up
+    setTimeout(() => {
+        overlay.style.opacity = "1";
+        clonedImg.style.transform = "scale(1)";
+    }, 10);
+
+    // Click to close
+    const closeZoom = () => {
+        clonedImg.style.transform = "scale(0.8)";
+        overlay.style.opacity = "0";
+        setTimeout(() => overlay.remove(), 400);
+    };
+    overlay.addEventListener("click", closeZoom);
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeZoom();
+    }, { once: true });
+};
+
 const buildPortfolioDashboard = (container) => {
     const grid = document.createElement("div");
-    grid.style.cssText = `display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:32px;width:100%;height:100%;padding:20px;box-sizing:border-box;overflow-y:auto;`;
+    grid.style.cssText = `
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+        gap:32px;
+        width:100%;
+        height:100%;
+        padding:20px;
+        box-sizing:border-box;
+        overflow-y:auto;
+    `;
     container.appendChild(grid);
-
-    const addProject = (title = "", contentHtml = "") => {
+    const addProject = (title = "", imageSrc = "", contentHtml = "", link = "#") => {
         const card = document.createElement("div");
-        card.style.cssText = `background:rgba(202,36,34,0.08);border-radius:24px;padding:32px;backdrop-filter:blur(12px);border:2px solid rgba(202,36,34,0.3);box-shadow:0 15px 50px rgba(202,36,34,0.25);transition:all .5s;position:relative;`;
-        card.onmouseenter = () => { card.style.transform = "translateY(-16px)"; card.style.borderColor = "#CA2422"; card.style.boxShadow = "0 25px 80px rgba(202,36,34,0.5)"; };
-        card.onmouseleave = () => { card.style.transform = ""; card.style.borderColor = "rgba(202,36,34,0.3)"; card.style.boxShadow = "0 15px 50px rgba(202,36,34,0.25)"; };
-
+        card.style.cssText = `
+            background:var(--theme-primary-soft);
+            border-radius:${THEME.cardRadius};
+            padding:32px;
+            backdrop-filter:blur(12px);
+            border:${THEME.cardBorderWidth} solid var(--theme-primary-border);
+            box-shadow:${THEME.cardShadow};
+            transition:all .5s;
+            position:relative;
+            overflow:hidden;
+        `;
+        card.onmouseenter = () => {
+            card.style.transform = "translateY(var(--theme-hover-lift))";
+            card.style.borderColor = "var(--theme-primary)";
+            card.style.boxShadow = THEME.hoverShadow;
+        };
+        card.onmouseleave = () => {
+            card.style.transform = "";
+            card.style.borderColor = "var(--theme-primary-border)";
+            card.style.boxShadow = THEME.cardShadow;
+        };
         if (title) {
             const h2 = document.createElement("h2");
             h2.innerHTML = GLITCH(title);
-            h2.style.cssText = "margin:0 0 20px;font-size:28px;color:#CA2422;font-weight:800;text-shadow:0 0 40px rgba(202,36,34,0.8);letter-spacing:2px;";
+            h2.style.cssText = `
+                margin:0 0 20px;
+                font-size:28px;
+                color:var(--theme-primary);
+                font-weight:800;
+                text-shadow:0 0 40px var(--theme-primary);
+                letter-spacing:2px;
+            `;
             card.appendChild(h2);
+        }
+        if (imageSrc) {
+            const imgContainer = document.createElement("div");
+            imgContainer.style.cssText = `
+                position:relative;width:100%;height:200px;overflow:hidden;border-radius:12px;
+                margin-bottom:24px;box-shadow:0 4px 20px rgba(0,0,0,0.2);
+            `;
+            const img = document.createElement("img");
+            img.src = imageSrc;
+            img.alt = title || "Project image";
+            img.style.cssText = `
+                width:100%;height:100%;object-fit:cover;transition:transform 0.5s;
+                border:3px solid var(--theme-primary);
+                box-shadow:0 15px 40px rgba(202,36,34,0.6);
+                cursor:pointer;
+            `;
+            img.addEventListener("click", (e) => {
+                e.stopPropagation();
+                window.toggleImageZoom(img);
+            });
+            imgContainer.appendChild(img);
+            card.appendChild(imgContainer);
+            card.addEventListener("mouseenter", () => (img.style.transform = "scale(1.1)"));
+            card.addEventListener("mouseleave", () => (img.style.transform = ""));
         }
         const content = document.createElement("div");
         content.innerHTML = contentHtml;
-        content.style.cssText = "color:#ffd7d7;line-height:1.8;font-size:17px;";
+        content.style.cssText = "color:var(--theme-text);line-height:1.8;font-size:17px;margin-bottom:12px;";
         card.appendChild(content);
+        const linkEl = document.createElement("a");
+        linkEl.href = link;
+        linkEl.textContent = "🔗 View on GitHub";
+        linkEl.target = "_blank";
+        linkEl.style.cssText = `
+            color:var(--theme-primary);
+            font-weight:bold;
+            text-decoration:none;
+            transition:color 0.3s;
+        `;
+        linkEl.onmouseenter = () => (linkEl.style.color = "#ff4444");
+        linkEl.onmouseleave = () => (linkEl.style.color = "var(--theme-primary)");
+        card.appendChild(linkEl);
         grid.appendChild(card);
     };
-
-    addProject("Cream Portal v9", `<p>This very site. A living, breathing digital demon built with nothing but vanilla JS, CSS sorcery, and pure devotion.</p><p style="margin-top:16px;color:#ff6b6b;font-size:15px;">Vanilla JS • Web Workers • CSS Hell • Love</p><a href="https://github.com/alexljn5/portfolio" target="_blank" style="position:absolute;bottom:24px;right:28px;color:#CA2422;font-weight:bold;text-decoration:none;text-shadow:0 0 20px #CA2422;">View Source CROSS</a>`);
-    addProject("VoidOS", `<p>A fully functional terminal-based OS running entirely in the browser.</p><p style="color:#ff6b6b;font-size:15px;">Three.js • WebGL • WebAssembly</p><a href="https://voidos.alexljn5.dev" target="_blank" style="position:absolute;bottom:24px;right:28px;color:#CA2422;font-weight:bold;text-decoration:none;text-shadow:0 0 20px #CA2422;">Launch CROSS</a>`);
-    addProject("Eternal Red", `<p>An infinite red gradient generator that slowly corrupts your soul.</p><p style="color:#ff6b6b;font-size:15px;">Canvas • requestAnimationFrame</p>`);
-    addProject("Coming Soon...", `<p style="font-style:italic;opacity:.8">More demons are being summoned...</p><p style="margin-top:20px;font-size:60px;text-align:center;">${GLITCH("CROSS")}</p>`);
-
+    addProject(
+        "Bunbit Game Engine",
+        "img/projects/bunbit_game_engine.png",
+        `<p>Game engine created with vanilla JavaScript and a little bit of Node.js.</p>
+         <p style="margin-top:16px;color:var(--theme-text-muted);font-size:15px;">Vanilla JS • Web Workers • CSS • WebGL</p>`,
+        "https://github.com/alexljn5/bunbit_project"
+    );
+    addProject(
+        "Emerald Utilities",
+        "img/projects/emerald_utilities.png",
+        `<p>A small auto script running tool.</p>
+         <p style="color:var(--theme-text-muted);font-size:15px;">Vanilla JS • NodeJS</p>`,
+        "https://github.com/alexljn5/emerald-utilities"
+    );
+    addProject(
+        "Tickit Team Project",
+        "img/projects/tickit_team_project.png",
+        `<p>Team project for school, a student and teacher ticket management system.</p>
+         <p style="color:var(--theme-text-muted);font-size:15px;">Canvas • requestAnimationFrame</p>`,
+        "https://github.com/alexljn5/croissant_project"
+    );
+    addProject(
+        "Tools4Ever",
+        "img/projects/tools4ever_project.png",
+        `<p>Fullstack project for school — a simple product dashboard where you can add, remove, view orders, and order new products.</p>
+         <p style="color:var(--theme-text-muted);font-size:15px;">JavaScript • MySQL • CSS</p>`,
+        "https://github.com/alexljn5/alexljn5s-fullstack-project"
+    );
     createBackButton("Return to Overview", returnToMainDashboard, "left");
     createBackButton("Return to Reality", returnToReality, "right");
 };

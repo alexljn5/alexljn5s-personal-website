@@ -233,7 +233,7 @@ const buildPortfolioDashboard = (container) => {
         "Bunbit Game Engine",
         "img/projects/bunbit_game_engine.png",
         `<p>Game engine created with vanilla JavaScript and a little bit of Node.js.</p>
-         <p style="margin-top:16px;color:var(--theme-text-muted);font-size:15px;">Vanilla JS • Web Workers • CSS Magic • WebGL</p>`,
+         <p style="margin-top:16px;color:var(--theme-text-muted);font-size:15px;">Vanilla JS • Web Workers • CSS • WebGL</p>`,
         "https://github.com/alexljn5/bunbit_project"
     );
     addProject(

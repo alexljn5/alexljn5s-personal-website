@@ -63,21 +63,26 @@ export const enterFullPortfolio = () => {
         mainBox.style.transform = "scale(0.92) rotate(-1deg)";
         mainBox.style.opacity = "0";
         setTimeout(() => {
+            // RESPONSIVE FULLSCREEN FIX
             Object.assign(mainBox.style, {
-                width: "calc(100vw - 80px)",
-                height: "calc(100vh - 80px)",
-                maxWidth: THEME.maxWidth,
-                maxHeight: THEME.maxHeight,
-                margin: THEME.margin,
-                padding: THEME.padding,
-                borderRadius: THEME.borderRadius,
-                border: `${THEME.borderWidth} solid var(--theme-primary)`,
+                width: "100vw",
+                height: "100vh",
+                maxWidth: "none",
+                maxHeight: "none",
+                margin: "0",
+                padding: "16px",
+                borderRadius: "0",
+                border: "none",
                 background: "var(--theme-bg-gradient)",
-                outline: `8px solid var(--theme-primary-alpha)`,
-                boxShadow: "0 20px 100px var(--theme-primary-glow), inset 0 0 80px rgba(202,36,34,0.1)",
+                boxShadow: "0 0 80px var(--theme-primary-glow)",
                 animation: "pulseGlow 6s infinite alternate",
                 transform: "",
-                opacity: "1"
+                opacity: "1",
+                overflow: "hidden",
+                position: "fixed",
+                top: 0,
+                left: 0,
+                zIndex: 9999
             });
             mainBox.innerHTML = "";
             buildPortfolioDashboard(mainBox);
@@ -85,7 +90,7 @@ export const enterFullPortfolio = () => {
     }, 1000);
 };
 
-// 🔥 Toggle image zoom overlay (using clone for smoother experience)
+// Toggle image zoom
 window.toggleImageZoom = (img) => {
     const existingOverlay = document.getElementById("imageZoomOverlay");
     if (existingOverlay) {
@@ -93,39 +98,28 @@ window.toggleImageZoom = (img) => {
         setTimeout(() => existingOverlay.remove(), 400);
         return;
     }
-
-    // Create dark overlay
     const overlay = document.createElement("div");
     overlay.id = "imageZoomOverlay";
     overlay.style.cssText = `
         position:fixed;top:0;left:0;width:100%;height:100%;
-        background:rgba(0,0,0,0.8);
-        backdrop-filter:blur(8px);
-        z-index:9998;
-        display:flex;align-items:center;justify-content:center;
+        background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);
+        z-index:9998;display:flex;align-items:center;justify-content:center;
         opacity:0;transition:opacity 0.4s ease;
     `;
     document.body.appendChild(overlay);
-
-    // Clone the image for zoom (keeps original in place)
     const clonedImg = img.cloneNode();
     clonedImg.style.cssText = `
         max-width:90%;max-height:90%;object-fit:contain;
         border:3px solid var(--theme-primary);
         box-shadow:0 0 100px rgba(202,36,34,0.8);
-        border-radius:12px;
-        transform:scale(0.8);transition:transform 0.4s ease;
+        border-radius:12px;transform:scale(0.8);transition:transform 0.4s ease;
         cursor:zoom-out;
     `;
     overlay.appendChild(clonedImg);
-
-    // Fade in and scale up
     setTimeout(() => {
         overlay.style.opacity = "1";
         clonedImg.style.transform = "scale(1)";
     }, 10);
-
-    // Click to close
     const closeZoom = () => {
         clonedImg.style.transform = "scale(0.8)";
         overlay.style.opacity = "0";
@@ -140,22 +134,24 @@ window.toggleImageZoom = (img) => {
 const buildPortfolioDashboard = (container) => {
     const grid = document.createElement("div");
     grid.style.cssText = `
-        display:grid;
-        grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
-        gap:32px;
-        width:100%;
-        height:100%;
-        padding:20px;
-        box-sizing:border-box;
-        overflow-y:auto;
-    `;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:24px;
+    width:100%;
+    height:100%;
+    padding:16px;
+    padding-top:100px; /* SPACE FOR TOP BUTTONS */
+    box-sizing:border-box;
+    overflow-y:auto;
+`;
     container.appendChild(grid);
+
     const addProject = (title = "", imageSrc = "", contentHtml = "", link = "#") => {
         const card = document.createElement("div");
         card.style.cssText = `
             background:var(--theme-primary-soft);
             border-radius:${THEME.cardRadius};
-            padding:32px;
+            padding:24px;
             backdrop-filter:blur(12px);
             border:${THEME.cardBorderWidth} solid var(--theme-primary-border);
             box-shadow:${THEME.cardShadow};
@@ -173,6 +169,7 @@ const buildPortfolioDashboard = (container) => {
             card.style.borderColor = "var(--theme-primary-border)";
             card.style.boxShadow = THEME.cardShadow;
         };
+
         if (title) {
             const h2 = document.createElement("h2");
             h2.innerHTML = GLITCH(title);
@@ -186,11 +183,12 @@ const buildPortfolioDashboard = (container) => {
             `;
             card.appendChild(h2);
         }
+
         if (imageSrc) {
             const imgContainer = document.createElement("div");
             imgContainer.style.cssText = `
-                position:relative;width:100%;height:200px;overflow:hidden;border-radius:12px;
-                margin-bottom:24px;box-shadow:0 4px 20px rgba(0,0,0,0.2);
+                position:relative;width:100%;height:180px;overflow:hidden;border-radius:12px;
+                margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,0.2);
             `;
             const img = document.createElement("img");
             img.src = imageSrc;
@@ -210,13 +208,15 @@ const buildPortfolioDashboard = (container) => {
             card.addEventListener("mouseenter", () => (img.style.transform = "scale(1.1)"));
             card.addEventListener("mouseleave", () => (img.style.transform = ""));
         }
+
         const content = document.createElement("div");
         content.innerHTML = contentHtml;
-        content.style.cssText = "color:var(--theme-text);line-height:1.8;font-size:17px;margin-bottom:12px;";
+        content.style.cssText = "color:var(--theme-text);line-height:1.8;font-size:16px;margin-bottom:12px;";
         card.appendChild(content);
+
         const linkEl = document.createElement("a");
         linkEl.href = link;
-        linkEl.textContent = "🔗 View on GitHub";
+        linkEl.textContent = "View on GitHub";
         linkEl.target = "_blank";
         linkEl.style.cssText = `
             color:var(--theme-primary);
@@ -227,8 +227,11 @@ const buildPortfolioDashboard = (container) => {
         linkEl.onmouseenter = () => (linkEl.style.color = "#ff4444");
         linkEl.onmouseleave = () => (linkEl.style.color = "var(--theme-primary)");
         card.appendChild(linkEl);
+
         grid.appendChild(card);
     };
+
+    // PROJECTS
     addProject(
         "Bunbit Game Engine",
         "img/projects/bunbit_game_engine.png",
@@ -257,6 +260,7 @@ const buildPortfolioDashboard = (container) => {
          <p style="color:var(--theme-text-muted);font-size:15px;">JavaScript • MySQL • CSS</p>`,
         "https://github.com/alexljn5/alexljn5s-fullstack-project"
     );
+
     createBackButton("Return to Overview", returnToMainDashboard, "left");
     createBackButton("Return to Reality", returnToReality, "right");
 };

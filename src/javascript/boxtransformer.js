@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
                    style="color:var(--theme-primary); text-decoration:none; margin:0 16px; text-shadow:0 0 20px var(--theme-primary);">GitHub</a>
             </div>
             <p style="margin-top:28px; font-size:16px; opacity:0.9; text-align:center;">
-                Almere • Available for internship • 2025
+                 2025
             </p>
         `);
         dashboard.appendChild(imageCard);
@@ -154,11 +154,6 @@ document.addEventListener("DOMContentLoaded", () => {
                and I excel at problem-solving. Others describe me as curious, kind, and intelligent.</p>
             <p>In my work, I value honesty, calm, and the ability to deliver high-quality results.<br>
                My greatest strengths are my <strong>perseverance</strong> and <strong>dedication</strong>.</p>
-            <p style="text-align:center; margin-top:28px; font-size:19px;">
-                I dream of a peaceful workplace where I can keep growing my ICT skills.<br>
-                During my internship, I want to evolve as a developer<br>
-                and apply everything I’ve learned — in the real world.
-            </p>
             <p style="text-align:right; margin-top:32px; font-style:italic; color:var(--theme-text-muted);">
                 — Alexander Leijen · ${GLITCH("˚ʚ♡ɞ˚")}
             </p>

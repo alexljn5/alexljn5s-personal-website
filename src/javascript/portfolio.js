@@ -4,8 +4,6 @@ import THEME from "./globals.js";
 export const returnToMainDashboard = () => {
     const mainBox = document.getElementById("mainBox");
     if (!mainBox) return;
-    const buttonContainer = mainBox.querySelector(".portfolio-buttons");
-    if (buttonContainer) buttonContainer.remove();
     mainBox.style.transition = "all 1.2s cubic-bezier(0.16, 1, 0.3, 1)";
     mainBox.style.transform = "scale(0.94) rotate(1deg)";
     mainBox.style.opacity = "0";
@@ -59,7 +57,9 @@ export const enterFullPortfolio = () => {
                 position: "fixed",
                 top: 0,
                 left: 0,
-                zIndex: 9999
+                zIndex: 9999,
+                display: "flex",
+                flexDirection: "column"
             });
 
             mainBox.innerHTML = "";
@@ -114,21 +114,16 @@ window.toggleImageZoom = (img) => {
 };
 
 const buildPortfolioDashboard = (container) => {
-    // === BUTTONS: SCROLL WITH CONTENT ===
-    const buttonContainer = document.createElement("div");
-    buttonContainer.className = "portfolio-buttons";
-    buttonContainer.style.cssText = `
-        position: absolute;
-        top: 16px;
-        left: 16px;
-        right: 16px;
+    // === HEADER ===
+    const header = document.createElement("header");
+    header.style.cssText = `
         display: flex;
         justify-content: space-between;
-        z-index: 100;
+        padding: 24px 20px 16px;
         pointer-events: none;
-        padding-bottom: 150px;
+        flex-shrink: 0;
     `;
-    container.appendChild(buttonContainer);
+    container.appendChild(header);
 
     const createBtn = (text, onClick) => {
         const btn = document.createElement("div");
@@ -162,31 +157,35 @@ const buildPortfolioDashboard = (container) => {
         return btn;
     };
 
-    buttonContainer.appendChild(createBtn("Return to Overview", returnToMainDashboard));
-    buttonContainer.appendChild(createBtn("Return to Reality", returnToReality));
+    header.appendChild(createBtn("Return to Overview", returnToMainDashboard));
+    header.appendChild(createBtn("Return to Reality", returnToReality));
 
-    // === SCROLLABLE CONTAINER ===
-    const scrollContainer = document.createElement("div");
-    scrollContainer.style.cssText = `
-        width: 100%;
-        height: 100%;
-        padding: 100px 16px 16px;  /* top = buttons + spacing */
-        box-sizing: border-box;
+    // === MAIN CONTENT ===
+    const mainContent = document.createElement("main");
+    mainContent.style.cssText = `
+        flex: 1;
         overflow-y: auto;
         overflow-x: hidden;
+        padding: 0 20px 40px;
+        box-sizing: border-box;
     `;
-    container.appendChild(scrollContainer);
+    container.appendChild(mainContent);
 
-    // === GRID ===
+    // === GRID: MAX 4 PER ROW, RESPONSIVE, CENTERED ===
     const grid = document.createElement("div");
     grid.style.cssText = `
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: 24px;
         width: 100%;
+        max-width: 1400px;     /* 4 cards max */
+        margin: 0 auto;
+        padding: 0 20px;
+        box-sizing: border-box;
     `;
-    scrollContainer.appendChild(grid);
+    mainContent.appendChild(grid);
 
+    // === ADD PROJECTS ===
     const addProject = (title, imageSrc, contentHtml, link) => {
         const card = document.createElement("div");
         card.style.cssText = `
@@ -273,7 +272,6 @@ const buildPortfolioDashboard = (container) => {
         grid.appendChild(card);
     };
 
-    // ADD PROJECTS
     addProject(
         "Bunbit Game Engine",
         "img/projects/bunbit_game_engine.png",

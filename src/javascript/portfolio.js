@@ -1,49 +1,11 @@
 import { evilGlitchEffect, evilGlitchEffect2 } from "./effects.js";
 import THEME from "./globals.js";
 
-// === BUTTONS OUTSIDE mainBox (fixed, always visible) ===
-const createBackButton = (text, onClick, position = "left") => {
-    const btn = document.createElement("div");
-    btn.innerHTML = text;
-    btn.style.cssText = `
-        position: fixed;
-        top: 50px;
-        ${position === "right" ? "right: 50px;" : "left: 50px;"}
-        z-index: 10000;
-        color: var(--theme-primary);
-        font-size: 18px;
-        font-weight: bold;
-        cursor: pointer;
-        padding: 14px 28px;
-        background: rgba(202,36,34,0.25);
-        border: 2px solid var(--theme-primary);
-        border-radius: 16px;
-        backdrop-filter: blur(12px);
-        text-shadow: 0 0 30px var(--theme-primary);
-        transition: all 0.4s ease;
-        pointer-events: auto;
-    `;
-    btn.onmouseenter = () => {
-        btn.style.background = "rgba(202,36,34,0.5)";
-        btn.style.transform = "translateY(-4px)";
-    };
-    btn.onmouseleave = () => {
-        btn.style.background = "rgba(202,36,34,0.25)";
-        btn.style.transform = "";
-    };
-    btn.onclick = () => {
-        evilGlitchEffect(btn, 8);
-        setTimeout(onClick, 400);
-    };
-    document.body.appendChild(btn);
-    return btn;
-};
-
 export const returnToMainDashboard = () => {
     const mainBox = document.getElementById("mainBox");
     if (!mainBox) return;
-    // Remove only our buttons
-    document.querySelectorAll("div[style*='position: fixed'][style*='z-index: 10000']").forEach(el => el.remove());
+    const buttonContainer = mainBox.querySelector(".portfolio-buttons");
+    if (buttonContainer) buttonContainer.remove();
     mainBox.style.transition = "all 1.2s cubic-bezier(0.16, 1, 0.3, 1)";
     mainBox.style.transform = "scale(0.94) rotate(1deg)";
     mainBox.style.opacity = "0";
@@ -102,10 +64,6 @@ export const enterFullPortfolio = () => {
 
             mainBox.innerHTML = "";
             buildPortfolioDashboard(mainBox);
-
-            // ADD BUTTONS AFTER mainBox is ready
-            createBackButton("Return to Overview", returnToMainDashboard, "left");
-            createBackButton("Return to Reality", returnToReality, "right");
         }, 900);
     }, 1000);
 };
@@ -156,20 +114,70 @@ window.toggleImageZoom = (img) => {
 };
 
 const buildPortfolioDashboard = (container) => {
-    // SCROLLABLE CONTAINER
+    // === BUTTONS: SCROLL WITH CONTENT ===
+    const buttonContainer = document.createElement("div");
+    buttonContainer.className = "portfolio-buttons";
+    buttonContainer.style.cssText = `
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        right: 16px;
+        display: flex;
+        justify-content: space-between;
+        z-index: 100;
+        pointer-events: none;
+        padding-bottom: 150px;
+    `;
+    container.appendChild(buttonContainer);
+
+    const createBtn = (text, onClick) => {
+        const btn = document.createElement("div");
+        btn.innerHTML = text;
+        btn.style.cssText = `
+            pointer-events: auto;
+            color: var(--theme-primary);
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 14px 28px;
+            background: rgba(202,36,34,0.25);
+            border: 2px solid var(--theme-primary);
+            border-radius: 16px;
+            backdrop-filter: blur(12px);
+            text-shadow: 0 0 30px var(--theme-primary);
+            transition: all 0.4s ease;
+        `;
+        btn.onmouseenter = () => {
+            btn.style.background = "rgba(202,36,34,0.5)";
+            btn.style.transform = "translateY(-4px)";
+        };
+        btn.onmouseleave = () => {
+            btn.style.background = "rgba(202,36,34,0.25)";
+            btn.style.transform = "";
+        };
+        btn.onclick = () => {
+            evilGlitchEffect(btn, 8);
+            setTimeout(onClick, 400);
+        };
+        return btn;
+    };
+
+    buttonContainer.appendChild(createBtn("Return to Overview", returnToMainDashboard));
+    buttonContainer.appendChild(createBtn("Return to Reality", returnToReality));
+
+    // === SCROLLABLE CONTAINER ===
     const scrollContainer = document.createElement("div");
     scrollContainer.style.cssText = `
         width: 100%;
         height: 100%;
-        padding: 16px;
-        padding-top: 100px;   /* Space for fixed buttons */
+        padding: 100px 16px 16px;  /* top = buttons + spacing */
         box-sizing: border-box;
         overflow-y: auto;
         overflow-x: hidden;
     `;
     container.appendChild(scrollContainer);
 
-    // GRID
+    // === GRID ===
     const grid = document.createElement("div");
     grid.style.cssText = `
         display: grid;
@@ -239,8 +247,8 @@ const buildPortfolioDashboard = (container) => {
             imgBox.appendChild(img);
             card.appendChild(imgBox);
 
-            card.onmouseenter = () => img.style.transform = "scale(1.1)";
-            card.onmouseleave = () => img.style.transform = "";
+            card.addEventListener("mouseenter", () => img.style.transform = "scale(1.1)");
+            card.addEventListener("mouseleave", () => img.style.transform = "");
         }
 
         const content = document.createElement("div");

@@ -1,4 +1,4 @@
-import { evilGlitchEffect, evilGlitchEffect2, GLITCH } from "./effects.js";
+import { evilGlitchEffect, evilGlitchEffect2 } from "./effects.js";
 import THEME from "./globals.js";
 
 const createBackButton = (text, onClick, position = "left") => {
@@ -63,7 +63,6 @@ export const enterFullPortfolio = () => {
         mainBox.style.transform = "scale(0.92) rotate(-1deg)";
         mainBox.style.opacity = "0";
         setTimeout(() => {
-            // RESPONSIVE FULLSCREEN FIX
             Object.assign(mainBox.style, {
                 width: "100vw",
                 height: "100vh",
@@ -90,63 +89,70 @@ export const enterFullPortfolio = () => {
     }, 1000);
 };
 
-// Toggle image zoom
+// ✅ FIXED ZOOM OVERLAY — click to enlarge, click/Escape to close
 window.toggleImageZoom = (img) => {
-    const existingOverlay = document.getElementById("imageZoomOverlay");
-    if (existingOverlay) {
-        existingOverlay.style.opacity = "0";
-        setTimeout(() => existingOverlay.remove(), 400);
+    const existing = document.getElementById("imageZoomOverlay");
+    if (existing) {
+        existing.style.opacity = "0";
+        setTimeout(() => existing.remove(), 400);
         return;
     }
+
     const overlay = document.createElement("div");
     overlay.id = "imageZoomOverlay";
     overlay.style.cssText = `
         position:fixed;top:0;left:0;width:100%;height:100%;
-        background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);
-        z-index:9998;display:flex;align-items:center;justify-content:center;
-        opacity:0;transition:opacity 0.4s ease;
+        background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);
+        z-index:10000;display:flex;align-items:center;justify-content:center;
+        opacity:0;transition:opacity 0.4s ease;cursor:zoom-out;
     `;
     document.body.appendChild(overlay);
-    const clonedImg = img.cloneNode();
-    clonedImg.style.cssText = `
+
+    const zoomImg = img.cloneNode(true);
+    zoomImg.style.cssText = `
         max-width:90%;max-height:90%;object-fit:contain;
         border:3px solid var(--theme-primary);
         box-shadow:0 0 100px rgba(202,36,34,0.8);
-        border-radius:12px;transform:scale(0.8);transition:transform 0.4s ease;
+        border-radius:16px;
+        transform:scale(0.8);
+        transition:transform 0.4s ease;
         cursor:zoom-out;
     `;
-    overlay.appendChild(clonedImg);
-    setTimeout(() => {
+    overlay.appendChild(zoomImg);
+
+    requestAnimationFrame(() => {
         overlay.style.opacity = "1";
-        clonedImg.style.transform = "scale(1)";
-    }, 10);
-    const closeZoom = () => {
-        clonedImg.style.transform = "scale(0.8)";
+        zoomImg.style.transform = "scale(1)";
+    });
+
+    const close = () => {
+        zoomImg.style.transform = "scale(0.8)";
         overlay.style.opacity = "0";
         setTimeout(() => overlay.remove(), 400);
     };
-    overlay.addEventListener("click", closeZoom);
+
+    overlay.addEventListener("click", close);
     document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") closeZoom();
+        if (e.key === "Escape") close();
     }, { once: true });
 };
 
 const buildPortfolioDashboard = (container) => {
     const grid = document.createElement("div");
     grid.style.cssText = `
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-    gap:24px;
-    width:100%;
-    height:100%;
-    padding:16px;
-    padding-top:100px; /* SPACE FOR TOP BUTTONS */
-    box-sizing:border-box;
-    overflow-y:auto;
-`;
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+        gap:24px;
+        width:100%;
+        height:100%;
+        padding:16px;
+        padding-top:100px;
+        box-sizing:border-box;
+        overflow-y:auto;
+    `;
     container.appendChild(grid);
 
-    const addProject = (title = "", imageSrc = "", contentHtml = "", link = "#") => {
+    const addProject = (title, imageSrc, contentHtml, link) => {
         const card = document.createElement("div");
         card.style.cssText = `
             background:var(--theme-primary-soft);
@@ -170,43 +176,43 @@ const buildPortfolioDashboard = (container) => {
             card.style.boxShadow = THEME.cardShadow;
         };
 
-        if (title) {
-            const h2 = document.createElement("h2");
-            h2.innerHTML = title;
-            h2.style.cssText = `
-                margin:0 0 20px;
-                font-size:28px;
-                color:var(--theme-primary);
-                font-weight:800;
-                text-shadow:0 0 40px var(--theme-primary);
-                letter-spacing:2px;
-            `;
-            card.appendChild(h2);
-        }
+        const h2 = document.createElement("h2");
+        h2.innerHTML = title;
+        h2.style.cssText = `
+            margin:0 0 20px;
+            font-size:28px;
+            color:var(--theme-primary);
+            font-weight:800;
+            text-shadow:0 0 40px var(--theme-primary);
+            letter-spacing:2px;
+        `;
+        card.appendChild(h2);
 
         if (imageSrc) {
-            const imgContainer = document.createElement("div");
-            imgContainer.style.cssText = `
-                position:relative;width:100%;height:180px;overflow:hidden;border-radius:12px;
-                margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,0.2);
+            const imgBox = document.createElement("div");
+            imgBox.style.cssText = `
+                position:relative;width:100%;height:180px;overflow:hidden;
+                border-radius:12px;margin-bottom:20px;
+                box-shadow:0 4px 20px rgba(0,0,0,0.2);
             `;
             const img = document.createElement("img");
             img.src = imageSrc;
             img.alt = title || "Project image";
             img.style.cssText = `
-                width:100%;height:100%;object-fit:cover;transition:transform 0.5s;
+                width:100%;height:100%;object-fit:cover;
                 border:3px solid var(--theme-primary);
                 box-shadow:0 15px 40px rgba(202,36,34,0.6);
-                cursor:pointer;
+                cursor:pointer;transition:transform 0.5s;
             `;
             img.addEventListener("click", (e) => {
                 e.stopPropagation();
                 window.toggleImageZoom(img);
             });
-            imgContainer.appendChild(img);
-            card.appendChild(imgContainer);
-            card.addEventListener("mouseenter", () => (img.style.transform = "scale(1.1)"));
-            card.addEventListener("mouseleave", () => (img.style.transform = ""));
+            imgBox.appendChild(img);
+            card.appendChild(imgBox);
+
+            card.addEventListener("mouseenter", () => img.style.transform = "scale(1.1)");
+            card.addEventListener("mouseleave", () => img.style.transform = "");
         }
 
         const content = document.createElement("div");
@@ -216,8 +222,8 @@ const buildPortfolioDashboard = (container) => {
 
         const linkEl = document.createElement("a");
         linkEl.href = link;
-        linkEl.textContent = "View on GitHub";
         linkEl.target = "_blank";
+        linkEl.textContent = "View on GitHub";
         linkEl.style.cssText = `
             color:var(--theme-primary);
             font-weight:bold;
@@ -231,11 +237,10 @@ const buildPortfolioDashboard = (container) => {
         grid.appendChild(card);
     };
 
-    // PROJECTS
     addProject(
         "Bunbit Game Engine",
         "img/projects/bunbit_game_engine.png",
-        `<p>Game engine created with vanilla JavaScript and a little bit of Node.js.</p>
+        `<p>Game engine created with vanilla JavaScript and Node.js.</p>
          <p style="margin-top:16px;color:var(--theme-text-muted);font-size:15px;">Vanilla JS • Web Workers • CSS • WebGL</p>`,
         "https://github.com/alexljn5/bunbit_project"
     );
@@ -249,14 +254,14 @@ const buildPortfolioDashboard = (container) => {
     addProject(
         "Tickit Team Project",
         "img/projects/tickit_team_project.png",
-        `<p>Team project for school, a student and teacher ticket management system.</p>
+        `<p>Team project for school, a student and teacher ticket system.</p>
          <p style="color:var(--theme-text-muted);font-size:15px;">Canvas • requestAnimationFrame</p>`,
         "https://github.com/alexljn5/croissant_project"
     );
     addProject(
         "Tools4Ever",
         "img/projects/tools4ever_project.png",
-        `<p>Fullstack project for school — a simple product dashboard where you can add, remove, view orders, and order new products.</p>
+        `<p>Fullstack project for school — a product dashboard with order handling.</p>
          <p style="color:var(--theme-text-muted);font-size:15px;">JavaScript • MySQL • CSS</p>`,
         "https://github.com/alexljn5/alexljn5s-fullstack-project"
     );

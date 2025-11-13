@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const aboutCard = addComponent("Who am I?", `
             <p style="text-align:center; font-size:22px; margin-bottom:24px;">
                 My name is <strong style="color:var(--theme-primary);">Alexander Leijen</strong>.<br>
-                I am 24 years old and currently studying <strong>Software Development</strong><br>
+                I am 24 years old, living in Almere and currently studying <strong>Software Development</strong><br>
                 at ROC van Flevoland, specializing in <strong>Web Development</strong>.
             </p>
             <p>I chose this path because I am deeply passionate about programming and technology.<br>

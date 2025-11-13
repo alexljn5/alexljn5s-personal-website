@@ -290,7 +290,7 @@ const buildPortfolioDashboard = (container) => {
         "Tickit Team Project",
         "img/projects/tickit_team_project.png",
         `<p>Team project for school, a student and teacher ticket system.</p>
-         <p style="color:var(--theme-text-muted);font-size:15px;">Canvas • requestAnimationFrame</p>`,
+         <p style="color:var(--theme-text-muted);font-size:15px;">Javascript • CSS • HTML • MySQL</p>`,
         "https://github.com/alexljn5/croissant_project"
     );
     addProject(

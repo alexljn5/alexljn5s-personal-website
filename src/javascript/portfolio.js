@@ -1,16 +1,27 @@
 import { evilGlitchEffect, evilGlitchEffect2 } from "./effects.js";
 import THEME from "./globals.js";
 
+// === BUTTONS OUTSIDE mainBox (fixed, always visible) ===
 const createBackButton = (text, onClick, position = "left") => {
     const btn = document.createElement("div");
     btn.innerHTML = text;
     btn.style.cssText = `
-        position:fixed;top:50px;${position === "right" ? "right:50px;" : "left:50px;"}z-index:9999;
-        color:var(--theme-primary);font-size:18px;font-weight:bold;cursor:pointer;
-        padding:14px 28px;background:rgba(202,36,34,0.25);
-        border:2px solid var(--theme-primary);border-radius:16px;
-        backdrop-filter:blur(12px);text-shadow:0 0 30px var(--theme-primary);
-        transition:all 0.4s ease;
+        position: fixed;
+        top: 50px;
+        ${position === "right" ? "right: 50px;" : "left: 50px;"}
+        z-index: 10000;
+        color: var(--theme-primary);
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 14px 28px;
+        background: rgba(202,36,34,0.25);
+        border: 2px solid var(--theme-primary);
+        border-radius: 16px;
+        backdrop-filter: blur(12px);
+        text-shadow: 0 0 30px var(--theme-primary);
+        transition: all 0.4s ease;
+        pointer-events: auto;
     `;
     btn.onmouseenter = () => {
         btn.style.background = "rgba(202,36,34,0.5)";
@@ -25,12 +36,14 @@ const createBackButton = (text, onClick, position = "left") => {
         setTimeout(onClick, 400);
     };
     document.body.appendChild(btn);
+    return btn;
 };
 
 export const returnToMainDashboard = () => {
     const mainBox = document.getElementById("mainBox");
     if (!mainBox) return;
-    document.querySelectorAll("div[style*='position:fixed'][style*='z-index:9999']").forEach(el => el.remove());
+    // Remove only our buttons
+    document.querySelectorAll("div[style*='position: fixed'][style*='z-index: 10000']").forEach(el => el.remove());
     mainBox.style.transition = "all 1.2s cubic-bezier(0.16, 1, 0.3, 1)";
     mainBox.style.transform = "scale(0.94) rotate(1deg)";
     mainBox.style.opacity = "0";
@@ -50,6 +63,7 @@ export const returnToReality = () => {
 export const enterFullPortfolio = () => {
     const mainBox = document.getElementById("mainBox");
     if (!mainBox) return;
+
     const trigger = document.getElementById("glitchme");
     if (trigger) {
         evilGlitchEffect(trigger, 16);
@@ -58,10 +72,12 @@ export const enterFullPortfolio = () => {
         trigger.style.fontSize = "52px";
         trigger.style.textShadow = "0 0 100px var(--theme-primary)";
     }
+
     setTimeout(() => {
         mainBox.style.transition = "all 1.4s cubic-bezier(0.16, 1, 0.3, 1)";
         mainBox.style.transform = "scale(0.92) rotate(-1deg)";
         mainBox.style.opacity = "0";
+
         setTimeout(() => {
             Object.assign(mainBox.style, {
                 width: "100vw",
@@ -69,7 +85,7 @@ export const enterFullPortfolio = () => {
                 maxWidth: "none",
                 maxHeight: "none",
                 margin: "0",
-                padding: "16px",
+                padding: "0",
                 borderRadius: "0",
                 border: "none",
                 background: "var(--theme-bg-gradient)",
@@ -83,13 +99,17 @@ export const enterFullPortfolio = () => {
                 left: 0,
                 zIndex: 9999
             });
+
             mainBox.innerHTML = "";
             buildPortfolioDashboard(mainBox);
+
+            // ADD BUTTONS AFTER mainBox is ready
+            createBackButton("Return to Overview", returnToMainDashboard, "left");
+            createBackButton("Return to Reality", returnToReality, "right");
         }, 900);
     }, 1000);
 };
 
-// ✅ FIXED ZOOM OVERLAY — click to enlarge, click/Escape to close
 window.toggleImageZoom = (img) => {
     const existing = document.getElementById("imageZoomOverlay");
     if (existing) {
@@ -101,22 +121,20 @@ window.toggleImageZoom = (img) => {
     const overlay = document.createElement("div");
     overlay.id = "imageZoomOverlay";
     overlay.style.cssText = `
-        position:fixed;top:0;left:0;width:100%;height:100%;
-        background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);
-        z-index:10000;display:flex;align-items:center;justify-content:center;
-        opacity:0;transition:opacity 0.4s ease;cursor:zoom-out;
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+        z-index: 10001; display: flex; align-items: center; justify-content: center;
+        opacity: 0; transition: opacity 0.4s ease; cursor: zoom-out;
     `;
     document.body.appendChild(overlay);
 
     const zoomImg = img.cloneNode(true);
     zoomImg.style.cssText = `
-        max-width:90%;max-height:90%;object-fit:contain;
-        border:3px solid var(--theme-primary);
-        box-shadow:0 0 100px rgba(202,36,34,0.8);
-        border-radius:16px;
-        transform:scale(0.8);
-        transition:transform 0.4s ease;
-        cursor:zoom-out;
+        max-width: 90%; max-height: 90%; object-fit: contain;
+        border: 3px solid var(--theme-primary);
+        box-shadow: 0 0 100px rgba(202,36,34,0.8);
+        border-radius: 16px; transform: scale(0.8);
+        transition: transform 0.4s ease; cursor: zoom-out;
     `;
     overlay.appendChild(zoomImg);
 
@@ -138,33 +156,43 @@ window.toggleImageZoom = (img) => {
 };
 
 const buildPortfolioDashboard = (container) => {
+    // SCROLLABLE CONTAINER
+    const scrollContainer = document.createElement("div");
+    scrollContainer.style.cssText = `
+        width: 100%;
+        height: 100%;
+        padding: 16px;
+        padding-top: 100px;   /* Space for fixed buttons */
+        box-sizing: border-box;
+        overflow-y: auto;
+        overflow-x: hidden;
+    `;
+    container.appendChild(scrollContainer);
+
+    // GRID
     const grid = document.createElement("div");
     grid.style.cssText = `
-        display:grid;
-        grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-        gap:24px;
-        width:100%;
-        height:100%;
-        padding:16px;
-        padding-top:100px;
-        box-sizing:border-box;
-        overflow-y:auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+        width: 100%;
     `;
-    container.appendChild(grid);
+    scrollContainer.appendChild(grid);
 
     const addProject = (title, imageSrc, contentHtml, link) => {
         const card = document.createElement("div");
         card.style.cssText = `
-            background:var(--theme-primary-soft);
-            border-radius:${THEME.cardRadius};
-            padding:24px;
-            backdrop-filter:blur(12px);
-            border:${THEME.cardBorderWidth} solid var(--theme-primary-border);
-            box-shadow:${THEME.cardShadow};
-            transition:all .5s;
-            position:relative;
-            overflow:hidden;
+            background: var(--theme-primary-soft);
+            border-radius: ${THEME.cardRadius};
+            padding: 24px;
+            backdrop-filter: blur(12px);
+            border: ${THEME.cardBorderWidth} solid var(--theme-primary-border);
+            box-shadow: ${THEME.cardShadow};
+            transition: all .5s;
+            position: relative;
+            overflow: hidden;
         `;
+
         card.onmouseenter = () => {
             card.style.transform = "translateY(var(--theme-hover-lift))";
             card.style.borderColor = "var(--theme-primary)";
@@ -179,45 +207,45 @@ const buildPortfolioDashboard = (container) => {
         const h2 = document.createElement("h2");
         h2.innerHTML = title;
         h2.style.cssText = `
-            margin:0 0 20px;
-            font-size:28px;
-            color:var(--theme-primary);
-            font-weight:800;
-            text-shadow:0 0 40px var(--theme-primary);
-            letter-spacing:2px;
+            margin: 0 0 20px;
+            font-size: 28px;
+            color: var(--theme-primary);
+            font-weight: 800;
+            text-shadow: 0 0 40px var(--theme-primary);
+            letter-spacing: 2px;
         `;
         card.appendChild(h2);
 
         if (imageSrc) {
             const imgBox = document.createElement("div");
             imgBox.style.cssText = `
-                position:relative;width:100%;height:180px;overflow:hidden;
-                border-radius:12px;margin-bottom:20px;
-                box-shadow:0 4px 20px rgba(0,0,0,0.2);
+                position: relative; width: 100%; height: 180px; overflow: hidden;
+                border-radius: 12px; margin-bottom: 20px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.2);
             `;
             const img = document.createElement("img");
             img.src = imageSrc;
-            img.alt = title || "Project image";
+            img.alt = title;
             img.style.cssText = `
-                width:100%;height:100%;object-fit:cover;
-                border:3px solid var(--theme-primary);
-                box-shadow:0 15px 40px rgba(202,36,34,0.6);
-                cursor:pointer;transition:transform 0.5s;
+                width: 100%; height: 100%; object-fit: cover;
+                border: 3px solid var(--theme-primary);
+                box-shadow: 0 15px 40px rgba(202,36,34,0.6);
+                cursor: pointer; transition: transform 0.5s;
             `;
-            img.addEventListener("click", (e) => {
+            img.onclick = (e) => {
                 e.stopPropagation();
                 window.toggleImageZoom(img);
-            });
+            };
             imgBox.appendChild(img);
             card.appendChild(imgBox);
 
-            card.addEventListener("mouseenter", () => img.style.transform = "scale(1.1)");
-            card.addEventListener("mouseleave", () => img.style.transform = "");
+            card.onmouseenter = () => img.style.transform = "scale(1.1)";
+            card.onmouseleave = () => img.style.transform = "";
         }
 
         const content = document.createElement("div");
         content.innerHTML = contentHtml;
-        content.style.cssText = "color:var(--theme-text);line-height:1.8;font-size:16px;margin-bottom:12px;";
+        content.style.cssText = "color: var(--theme-text); line-height: 1.8; font-size: 16px; margin-bottom: 12px;";
         card.appendChild(content);
 
         const linkEl = document.createElement("a");
@@ -225,18 +253,19 @@ const buildPortfolioDashboard = (container) => {
         linkEl.target = "_blank";
         linkEl.textContent = "View on GitHub";
         linkEl.style.cssText = `
-            color:var(--theme-primary);
-            font-weight:bold;
-            text-decoration:none;
-            transition:color 0.3s;
+            color: var(--theme-primary);
+            font-weight: bold;
+            text-decoration: none;
+            transition: color 0.3s;
         `;
-        linkEl.onmouseenter = () => (linkEl.style.color = "#ff4444");
-        linkEl.onmouseleave = () => (linkEl.style.color = "var(--theme-primary)");
+        linkEl.onmouseenter = () => linkEl.style.color = "#ff4444";
+        linkEl.onmouseleave = () => linkEl.style.color = "var(--theme-primary)";
         card.appendChild(linkEl);
 
         grid.appendChild(card);
     };
 
+    // ADD PROJECTS
     addProject(
         "Bunbit Game Engine",
         "img/projects/bunbit_game_engine.png",
@@ -265,7 +294,4 @@ const buildPortfolioDashboard = (container) => {
          <p style="color:var(--theme-text-muted);font-size:15px;">JavaScript • MySQL • CSS</p>`,
         "https://github.com/alexljn5/alexljn5s-fullstack-project"
     );
-
-    createBackButton("Return to Overview", returnToMainDashboard, "left");
-    createBackButton("Return to Reality", returnToReality, "right");
 };

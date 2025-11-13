@@ -172,7 +172,7 @@ const buildPortfolioDashboard = (container) => {
 
         if (title) {
             const h2 = document.createElement("h2");
-            h2.innerHTML = GLITCH(title);
+            h2.innerHTML = title;
             h2.style.cssText = `
                 margin:0 0 20px;
                 font-size:28px;
